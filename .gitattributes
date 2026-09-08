@@ -1,0 +1,21 @@
+# Authored on Windows, executed on Linux inside Docker. Without this, Git
+# checks scripts out with CRLF and the container fails on the shebang line with
+# a misleading "no such file or directory" for /bin/sh. Force LF for everything
+# that runs on the VPS.
+* text=auto eol=lf
+
+*.sh      text eol=lf
+*.py      text eol=lf
+*.sql     text eol=lf
+*.yml     text eol=lf
+*.md      text eol=lf
+Dockerfile     text eol=lf
+.dockerignore  text eol=lf
+.env.example   text eol=lf
+
+# data files: keep byte-exact, never touch line endings
+*.csv     -text
+*.json    -text
+*.geojson -text
+*.xlsx    binary
+*.pdf     binary

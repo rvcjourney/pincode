@@ -1,0 +1,619 @@
+<title>CK PIN Code Explorer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#F6F7F9; --surface:#FFFFFF; --surface-2:#F0F2F5; --raised:#FFFFFF;
+  --ink:#111823; --ink-2:#3D4756; --muted:#5C6675; --faint:#8A94A3;
+  --line:#DDE2E9; --line-2:#C8D0DA;
+  --accent:#1F6F6B; --accent-ink:#14504D; --accent-wash:#E4EFEE;
+  --warn:#9A5B06; --warn-wash:#FBF0DE; --warn-line:#E7C68A;
+  --bad:#A32219; --bad-wash:#FBE9E7;
+  --good:#166534; --good-wash:#E6F2EA;
+  --shadow:0 1px 2px rgba(17,24,35,.06), 0 8px 24px -12px rgba(17,24,35,.18);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0E1116; --surface:#161A21; --surface-2:#1B212A; --raised:#1B212A;
+    --ink:#E9EDF3; --ink-2:#BAC3CF; --muted:#96A0AE; --faint:#6E7889;
+    --line:#262D38; --line-2:#333C49;
+    --accent:#5FBDB6; --accent-ink:#8AD6D0; --accent-wash:#14302F;
+    --warn:#E0A652; --warn-wash:#33260F; --warn-line:#6B5222;
+    --bad:#EE8177; --bad-wash:#3A1A17;
+    --good:#6FCF97; --good-wash:#12301F;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0E1116; --surface:#161A21; --surface-2:#1B212A; --raised:#1B212A;
+  --ink:#E9EDF3; --ink-2:#BAC3CF; --muted:#96A0AE; --faint:#6E7889;
+  --line:#262D38; --line-2:#333C49;
+  --accent:#5FBDB6; --accent-ink:#8AD6D0; --accent-wash:#14302F;
+  --warn:#E0A652; --warn-wash:#33260F; --warn-line:#6B5222;
+  --bad:#EE8177; --bad-wash:#3A1A17;
+  --good:#6FCF97; --good-wash:#12301F;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -12px rgba(0,0,0,.6);
+}
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--ground); color:var(--ink);
+  font-family:var(--sans); font-size:14px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:1440px; margin:0 auto; padding:20px 20px 56px}
+
+/* ---------------------------------------------------------------- header */
+header{display:flex; flex-wrap:wrap; align-items:flex-end; gap:16px 24px; margin-bottom:18px}
+.brand{display:flex; flex-direction:column; gap:3px}
+.eyebrow{
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--accent); font-weight:600;
+}
+h1{
+  margin:0; font-size:26px; font-weight:600; letter-spacing:-.022em;
+  text-wrap:balance; line-height:1.15;
+}
+.sub{color:var(--muted); font-size:13px; max-width:62ch}
+.hdr-right{margin-left:auto; display:flex; align-items:center; gap:8px}
+.themebtn{
+  font:inherit; font-size:12px; color:var(--ink-2); background:var(--surface);
+  border:1px solid var(--line); border-radius:7px; padding:6px 11px; cursor:pointer;
+}
+.themebtn:hover{border-color:var(--line-2); color:var(--ink)}
+
+/* ------------------------------------------------------------ stat strip */
+.stats{
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+  gap:1px; background:var(--line); border:1px solid var(--line);
+  border-radius:10px; overflow:hidden; margin-bottom:16px;
+}
+.stat{background:var(--surface); padding:11px 14px; display:flex; flex-direction:column; gap:2px}
+.stat .k{
+  font-family:var(--mono); font-size:10px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint); font-weight:500;
+}
+.stat .v{
+  font-family:var(--mono); font-size:20px; font-weight:600;
+  font-variant-numeric:tabular-nums; letter-spacing:-.02em; line-height:1.2;
+}
+.stat.is-warn .v{color:var(--warn)}
+.stat.is-accent .v{color:var(--accent)}
+
+/* ---------------------------------------------------------------- layout */
+.console{display:grid; grid-template-columns:250px minmax(0,1fr); gap:16px; align-items:start}
+@media (max-width:1080px){.console{grid-template-columns:1fr}}
+
+/* --------------------------------------------------------------- filters */
+.rail{
+  background:var(--surface); border:1px solid var(--line); border-radius:10px;
+  padding:14px; display:flex; flex-direction:column; gap:14px; position:sticky; top:16px;
+}
+@media (max-width:1080px){.rail{position:static}}
+.fgroup{display:flex; flex-direction:column; gap:6px}
+.flabel{
+  font-family:var(--mono); font-size:10px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--faint); font-weight:500;
+}
+input[type=search],select{
+  font:inherit; font-size:13px; width:100%; padding:7px 9px; color:var(--ink);
+  background:var(--ground); border:1px solid var(--line-2); border-radius:7px;
+}
+input[type=search]{font-family:var(--mono)}
+input[type=search]:focus,select:focus{
+  outline:2px solid var(--accent); outline-offset:1px; border-color:transparent;
+}
+.checks{display:flex; flex-direction:column; gap:7px}
+.check{display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; color:var(--ink-2)}
+.check input{accent-color:var(--accent); width:14px; height:14px; cursor:pointer; margin:0}
+.check:hover{color:var(--ink)}
+.railbtn{
+  font:inherit; font-size:12.5px; padding:7px 10px; border-radius:7px; cursor:pointer;
+  border:1px solid var(--line-2); background:var(--ground); color:var(--ink-2); width:100%;
+}
+.railbtn:hover{border-color:var(--accent); color:var(--accent)}
+.railbtn.primary{background:var(--accent-wash); border-color:var(--accent); color:var(--accent-ink); font-weight:500}
+.hint{font-size:11.5px; color:var(--faint); line-height:1.45}
+
+/* ----------------------------------------------------------------- table */
+.panel{background:var(--surface); border:1px solid var(--line); border-radius:10px; overflow:hidden}
+.panel-hd{
+  display:flex; align-items:center; gap:12px; padding:10px 14px;
+  border-bottom:1px solid var(--line); background:var(--surface-2);
+}
+.count{font-family:var(--mono); font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.count b{color:var(--ink); font-weight:600}
+.scroller{height:min(58vh,560px); overflow:auto; overflow-x:auto}
+table{width:100%; border-collapse:collapse; font-size:13px}
+thead th{
+  position:sticky; top:0; z-index:2; background:var(--surface);
+  border-bottom:1px solid var(--line-2); text-align:left; padding:8px 12px;
+  font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--faint); font-weight:600; white-space:nowrap; cursor:pointer; user-select:none;
+}
+thead th:hover{color:var(--accent)}
+thead th .ar{color:var(--accent); font-size:9px}
+tbody td{padding:7px 12px; border-bottom:1px solid var(--line); white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+tbody tr[aria-selected=true] td{background:var(--accent-wash)}
+.num{font-family:var(--mono); font-variant-numeric:tabular-nums; text-align:right}
+.pin{font-family:var(--mono); font-weight:600; letter-spacing:.02em}
+.tname{max-width:210px; overflow:hidden; text-overflow:ellipsis}
+.dim{color:var(--muted)}
+
+/* ----------------------------------------------------------------- pills */
+.pill{
+  display:inline-block; font-family:var(--mono); font-size:10px; font-weight:600;
+  letter-spacing:.05em; text-transform:uppercase; padding:2px 6px; border-radius:4px;
+  border:1px solid transparent; white-space:nowrap;
+}
+.pill.good{background:var(--good-wash); color:var(--good)}
+.pill.bad{background:var(--bad-wash); color:var(--bad)}
+.pill.warn{background:var(--warn-wash); color:var(--warn); border-color:var(--warn-line)}
+.pill.mute{background:var(--surface-2); color:var(--muted); border-color:var(--line)}
+
+/* ---------------------------------------------------------------- detail */
+.detail{
+  margin-top:16px; background:var(--surface); border:1px solid var(--line);
+  border-radius:10px; padding:0; overflow:hidden;
+}
+.detail-hd{
+  display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+  padding:14px 16px; border-bottom:1px solid var(--line); background:var(--surface-2);
+}
+.detail-pin{
+  font-family:var(--mono); font-size:30px; font-weight:600;
+  letter-spacing:.06em; line-height:1;
+}
+.detail-body{padding:16px; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:20px}
+.dsec{display:flex; flex-direction:column; gap:9px; min-width:0}
+.dsec h3{
+  margin:0; font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint); font-weight:600;
+}
+.kv{display:flex; justify-content:space-between; gap:14px; font-size:13px; align-items:baseline}
+.kv dt{color:var(--muted); flex:none}
+.kv dd{margin:0; text-align:right; min-width:0; overflow-wrap:anywhere}
+.kv dd.n{font-family:var(--mono); font-variant-numeric:tabular-nums}
+
+/* PIN digit decomposition - zone / sub-zone / sorting district */
+.decomp{display:flex; gap:5px}
+.dig{
+  flex:1; text-align:center; border:1px solid var(--line); border-radius:7px;
+  padding:7px 3px; background:var(--ground); min-width:0;
+}
+.dig .d{font-family:var(--mono); font-size:17px; font-weight:600; letter-spacing:.04em}
+.dig .l{font-size:9px; color:var(--faint); letter-spacing:.05em; text-transform:uppercase; line-height:1.3; margin-top:3px}
+.dig.z{border-color:var(--accent); background:var(--accent-wash)}
+.dig.z .d{color:var(--accent-ink)}
+
+.spanbox{
+  border:1px solid var(--warn-line); background:var(--warn-wash);
+  border-radius:8px; padding:11px 13px;
+}
+.spanbox p{margin:0 0 8px; font-size:12.5px; color:var(--warn); line-height:1.45}
+.spanbox p b{font-weight:600}
+.spanlist{display:flex; flex-wrap:wrap; gap:5px; margin:0; padding:0; list-style:none}
+.spanlist li{
+  font-family:var(--mono); font-size:11px; background:var(--surface);
+  border:1px solid var(--warn-line); color:var(--ink-2);
+  padding:2px 7px; border-radius:4px;
+}
+.empty{padding:40px 16px; text-align:center; color:var(--faint); font-size:13px}
+
+/* ---------------------------------------------------------------- footer */
+footer{
+  margin-top:24px; padding-top:16px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; gap:16px 32px; font-size:12px; color:var(--muted);
+}
+footer a{color:var(--accent); text-decoration:none}
+footer a:hover{text-decoration:underline}
+.attrib{max-width:52ch; line-height:1.5}
+.srcs{display:flex; flex-direction:column; gap:3px; font-family:var(--mono); font-size:11px}
+.srcs .no{color:var(--warn)}
+.srcs .yes{color:var(--good)}
+.toast{
+  position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+  background:var(--ink); color:var(--ground); font-size:13px; padding:9px 16px;
+  border-radius:8px; box-shadow:var(--shadow); z-index:50;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <div class="eyebrow">CK PIN Code Master</div>
+      <h1>PIN Code Explorer</h1>
+      <div class="sub">Every Indian PIN code in the master, with the offices behind it &mdash; and an explicit warning wherever a PIN spans more than one district.</div>
+    </div>
+    <div class="hdr-right">
+      <button class="themebtn" id="theme" type="button">Theme</button>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="console">
+    <aside class="rail">
+      <div class="fgroup">
+        <label class="flabel" for="q">Search</label>
+        <input type="search" id="q" placeholder="PIN, office, district" autocomplete="off">
+        <div class="hint">Matches PIN prefix, office name or district.</div>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="fstate">State / UT</label>
+        <select id="fstate"><option value="">All states</option></select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel" for="fdist">District</label>
+        <select id="fdist"><option value="">All districts</option></select>
+      </div>
+      <div class="fgroup">
+        <div class="flabel">Filters</div>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="fmulti"> Spans &gt;1 district</label>
+          <label class="check"><input type="checkbox" id="fdeliv"> Deliverable only</label>
+          <label class="check"><input type="checkbox" id="factive" checked> Active only</label>
+          <label class="check"><input type="checkbox" id="fnogeo"> Missing centroid</label>
+        </div>
+      </div>
+      <div class="fgroup">
+        <button class="railbtn primary" id="copy" type="button">Copy results as CSV</button>
+        <button class="railbtn" id="reset" type="button">Reset filters</button>
+        <div class="hint">Copy puts the filtered rows on your clipboard as CSV &mdash; paste straight into Sheets or Excel.</div>
+      </div>
+    </aside>
+
+    <main style="min-width:0">
+      <section class="panel">
+        <div class="panel-hd">
+          <div class="count" id="count"></div>
+        </div>
+        <div class="scroller" id="scroller">
+          <table>
+            <thead><tr id="hrow"></tr></thead>
+            <tbody id="tbody"></tbody>
+          </table>
+          <div class="empty" id="empty" hidden>No PIN codes match these filters.</div>
+        </div>
+      </section>
+      <section class="detail" id="detail"></section>
+    </main>
+  </div>
+
+  <footer>
+    <div class="attrib">
+      <strong style="color:var(--ink)">Department of Posts, Government of India, via data.gov.in.</strong>
+      Released under the Government Open Data Licence &ndash; India (GODL): free commercial
+      use with attribution. Community-compiled sources are derived works &mdash; verify
+      before any regulatory use.
+    </div>
+    <div class="srcs" id="srcs"></div>
+  </footer>
+</div>
+
+<script id="ckdata" type="application/json">/*__DATA__*/</script>
+<script>
+(function(){
+"use strict";
+var D = JSON.parse(document.getElementById("ckdata").textContent);
+var ROWS = D.rows, ST = D.states, DI = D.districts, SPANS = D.spans, META = D.meta;
+// column order inside each row, mirroring D.schema
+var PIN=0, OFF=1, DIST=2, STATE=3, NOFF=4, NDEL=5, DELIV=6, NDIST=7, NST=8,
+    LAT=9, LON=10, AREA=11, GEO=12, ACTIVE=13, ARMY=14;
+
+var nf = new Intl.NumberFormat("en-IN");
+function num(n){ return nf.format(n); }
+function dname(i){ return i < 0 ? "—" : DI[i]; }
+function sname(i){ return i < 0 ? "—" : ST[i]; }
+
+/* ------------------------------------------------------------- stat strip */
+(function(){
+  var active = 0, deliv = 0, multi = 0, geo = 0;
+  for (var i=0;i<ROWS.length;i++){
+    if (ROWS[i][ACTIVE]) active++;
+    if (ROWS[i][DELIV]) deliv++;
+    if (ROWS[i][NDIST] > 1) multi++;
+    if (ROWS[i][GEO]) geo++;
+  }
+  var tiles = [
+    ["PIN codes", num(ROWS.length), ""],
+    ["Active", num(active), ""],
+    ["Deliverable", num(deliv), ""],
+    ["Post offices", num(META.offices), ""],
+    ["Spans &gt;1 district", num(multi), "is-warn"],
+    ["With geometry", num(geo), "is-accent"]
+  ];
+  document.getElementById("stats").innerHTML = tiles.map(function(t){
+    return '<div class="stat '+t[2]+'"><span class="k">'+t[0]+'</span><span class="v">'+t[1]+'</span></div>';
+  }).join("");
+})();
+
+/* --------------------------------------------------------------- provenance */
+document.getElementById("srcs").innerHTML = META.sources.map(function(s){
+  return '<div><span class="'+(s.authoritative?"yes":"no")+'">'
+       + (s.authoritative ? "● authoritative" : "○ unverified")
+       + '</span> <a href="'+s.url+'" target="_blank" rel="noopener">'+s.dataset_title+'</a></div>';
+}).join("");
+
+/* ------------------------------------------------------------------ filters */
+var selState = document.getElementById("fstate"), selDist = document.getElementById("fdist");
+ST.forEach(function(s,i){ selState.add(new Option(s, String(i))); });
+function fillDistricts(){
+  var sv = selState.value, keep = {}, cur = selDist.value;
+  for (var i=0;i<ROWS.length;i++){
+    var r = ROWS[i];
+    if (sv !== "" && String(r[STATE]) !== sv) continue;
+    if (r[DIST] >= 0) keep[r[DIST]] = 1;
+  }
+  var ids = Object.keys(keep).map(Number).sort(function(a,b){ return DI[a] < DI[b] ? -1 : 1; });
+  selDist.innerHTML = '<option value="">All districts</option>';
+  ids.forEach(function(i){ selDist.add(new Option(DI[i], String(i))); });
+  if (keep[cur]) selDist.value = cur;
+}
+fillDistricts();
+
+var S = { q:"", state:"", dist:"", multi:false, deliv:false, active:true, nogeo:false,
+          sort:PIN, dir:1, sel:-1, view:[] };
+
+function apply(){
+  var q = S.q.trim().toLowerCase(), out = [];
+  for (var i=0;i<ROWS.length;i++){
+    var r = ROWS[i];
+    if (S.active && !r[ACTIVE]) continue;
+    if (S.multi && r[NDIST] <= 1) continue;
+    if (S.deliv && !r[DELIV]) continue;
+    if (S.nogeo && r[LAT] !== null) continue;
+    if (S.state !== "" && String(r[STATE]) !== S.state) continue;
+    if (S.dist !== "" && String(r[DIST]) !== S.dist) continue;
+    if (q){
+      var hit = r[PIN].indexOf(q) === 0
+             || r[OFF].toLowerCase().indexOf(q) >= 0
+             || (r[DIST] >= 0 && DI[r[DIST]].toLowerCase().indexOf(q) >= 0);
+      if (!hit) continue;
+    }
+    out.push(i);
+  }
+  var c = S.sort, d = S.dir;
+  out.sort(function(a,b){
+    var x = ROWS[a][c], y = ROWS[b][c];
+    if (c === DIST){ x = dname(x); y = dname(y); }
+    if (c === STATE){ x = sname(x); y = sname(y); }
+    if (x === null) x = -Infinity;
+    if (y === null) y = -Infinity;
+    if (x < y) return -d;
+    if (x > y) return d;
+    return ROWS[a][PIN] < ROWS[b][PIN] ? -1 : 1;
+  });
+  S.view = out;
+  document.getElementById("count").innerHTML =
+    "<b>" + num(out.length) + "</b> of " + num(ROWS.length) + " PIN codes";
+  document.getElementById("empty").hidden = out.length > 0;
+  render(true);
+}
+
+/* -------------------------------------------------- windowed table rendering */
+var COLS = [
+  ["PIN", PIN, "pin"], ["Primary office", OFF, "tname"], ["District", DIST, ""],
+  ["State / UT", STATE, ""], ["Offices", NOFF, "num"], ["Districts", NDIST, "num"],
+  ["Area km²", AREA, "num"], ["Status", ACTIVE, ""]
+];
+document.getElementById("hrow").innerHTML = COLS.map(function(c,i){
+  return '<th data-c="'+i+'">'+c[0]+' <span class="ar" data-ar="'+i+'"></span></th>';
+}).join("");
+
+var ROWH = 30, PAD = 8;
+var scroller = document.getElementById("scroller"), tbody = document.getElementById("tbody");
+
+function cell(r, ci){
+  var key = COLS[ci][1];
+  switch (key){
+    case PIN:   return '<span class="pin">' + r[PIN] + '</span>';
+    case OFF:   return r[OFF] ? r[OFF] : '<span class="dim">—</span>';
+    case DIST:  return r[DIST] < 0 ? '<span class="dim">—</span>' : DI[r[DIST]];
+    case STATE: return r[STATE] < 0 ? '<span class="dim">—</span>' : ST[r[STATE]];
+    case NOFF:  return num(r[NOFF]);
+    case NDIST: return r[NDIST] > 1
+                  ? '<span class="pill warn">' + r[NDIST] + '</span>'
+                  : '<span class="dim">' + r[NDIST] + '</span>';
+    case AREA:  return r[AREA] === null ? '<span class="dim">—</span>' : nf.format(r[AREA]);
+    case ACTIVE:
+      if (!r[ACTIVE]) return '<span class="pill mute">retired</span>';
+      return r[DELIV] ? '<span class="pill good">deliverable</span>'
+                      : '<span class="pill bad">no delivery</span>';
+  }
+  return "";
+}
+
+function render(reset){
+  if (reset) scroller.scrollTop = 0;
+  var total = S.view.length;
+  var vis = Math.ceil(scroller.clientHeight / ROWH) + PAD * 2;
+  var start = Math.max(0, Math.floor(scroller.scrollTop / ROWH) - PAD);
+  var end = Math.min(total, start + vis);
+  var html = "";
+  if (start > 0) html += '<tr style="height:' + (start * ROWH) + 'px"><td colspan="8"></td></tr>';
+  for (var i = start; i < end; i++){
+    var idx = S.view[i], r = ROWS[idx];
+    html += '<tr data-i="' + idx + '" aria-selected="' + (idx === S.sel) + '" style="height:' + ROWH + 'px">';
+    for (var c = 0; c < COLS.length; c++){
+      html += '<td class="' + COLS[c][2] + '">' + cell(r, c) + '</td>';
+    }
+    html += '</tr>';
+  }
+  if (end < total) html += '<tr style="height:' + ((total - end) * ROWH) + 'px"><td colspan="8"></td></tr>';
+  tbody.innerHTML = html;
+}
+
+scroller.addEventListener("scroll", function(){ render(false); }, {passive:true});
+window.addEventListener("resize", function(){ render(false); });
+
+/* ------------------------------------------------------------- detail panel */
+function detail(idx){
+  var el = document.getElementById("detail");
+  if (idx < 0){
+    el.innerHTML = '<div class="empty">Select a PIN code to see its offices, geometry and district spread.</div>';
+    return;
+  }
+  var r = ROWS[idx], pin = r[PIN];
+  var pills = "";
+  if (!r[ACTIVE]) pills += '<span class="pill mute">retired &mdash; no live office</span> ';
+  else pills += r[DELIV] ? '<span class="pill good">deliverable</span> '
+                         : '<span class="pill bad">no delivery office</span> ';
+  if (r[NDIST] > 1) pills += '<span class="pill warn">spans ' + r[NDIST] + ' districts</span> ';
+  if (r[NST] > 1) pills += '<span class="pill warn">spans ' + r[NST] + ' states</span> ';
+  if (!r[GEO]) pills += '<span class="pill mute">no polygon</span> ';
+  if (r[ARMY]) pills += '<span class="pill warn">army postal</span> ';
+
+  // A PIN is not an opaque number: digit 1 is the postal zone, digits 1-2 the
+  // sub-zone (circle), digits 1-3 the sorting district, digits 4-6 the office.
+  var decomp = '<div class="decomp">'
+    + '<div class="dig z"><div class="d">' + pin[0] + '</div><div class="l">Zone</div></div>'
+    + '<div class="dig"><div class="d">' + pin.slice(0,2) + '</div><div class="l">Sub-zone</div></div>'
+    + '<div class="dig"><div class="d">' + pin.slice(0,3) + '</div><div class="l">Sorting dist.</div></div>'
+    + '<div class="dig"><div class="d">' + pin.slice(3) + '</div><div class="l">Office</div></div>'
+    + '</div>';
+
+  var spanHtml = "";
+  if (SPANS[pin]){
+    var seen = {}, items = [];
+    SPANS[pin].forEach(function(p){
+      var label = dname(p[0]) + (p[1] >= 0 && r[NST] > 1 ? " · " + ST[p[1]] : "");
+      if (!seen[label]){ seen[label] = 1; items.push(label); }
+    });
+    items.sort();
+    spanHtml = '<div class="dsec"><h3>Districts this PIN covers</h3>'
+      + '<div class="spanbox"><p>This PIN spans <b>' + items.length + ' districts</b> across '
+      + num(r[NOFF]) + ' offices. Use <b>' + dname(r[DIST])
+      + '</b> as a default the user can override &mdash; never as a verified value.</p>'
+      + '<ul class="spanlist">' + items.map(function(x){ return '<li>' + x + '</li>'; }).join("") + '</ul>'
+      + '</div></div>';
+  }
+
+  var coords = r[LAT] === null
+    ? '<span class="pill mute">none</span>'
+    : r[LAT].toFixed(4) + ", " + r[LON].toFixed(4);
+
+  el.innerHTML =
+    '<div class="detail-hd"><span class="detail-pin">' + pin + '</span><div>' + pills + '</div></div>'
+    + '<div class="detail-body">'
+    + '<div class="dsec"><h3>PIN structure</h3>' + decomp
+    + '<div class="hint">Digit 1 is the postal zone, digits 1&ndash;3 the sorting district, the last three the delivery office.</div></div>'
+    + '<div class="dsec"><h3>Administration</h3><dl style="margin:0;display:flex;flex-direction:column;gap:7px">'
+    + kv("Primary office", r[OFF] || "—")
+    + kv("District", dname(r[DIST]))
+    + kv("State / UT", sname(r[STATE]))
+    + kv("Post offices", num(r[NOFF]), true)
+    + kv("Delivery offices", num(r[NDEL]), true)
+    + '</dl></div>'
+    + '<div class="dsec"><h3>Geography</h3><dl style="margin:0;display:flex;flex-direction:column;gap:7px">'
+    + kv("Centroid", coords, true)
+    + kv("Area", r[AREA] === null ? "—" : nf.format(r[AREA]) + " km²", true)
+    + kv("Boundary polygon", r[GEO] ? "yes" : "no")
+    + '</dl>'
+    + (r[LAT] === null ? '<div class="hint" style="color:var(--warn)">No centroid: radius and distance serviceability cannot resolve this PIN.</div>' : "")
+    + '</div>'
+    + spanHtml
+    + '</div>';
+}
+function kv(k, v, mono){
+  return '<div class="kv"><dt>' + k + '</dt><dd class="' + (mono ? "n" : "") + '">' + v + '</dd></div>';
+}
+
+tbody.addEventListener("click", function(e){
+  var tr = e.target.closest("tr[data-i]");
+  if (!tr) return;
+  S.sel = Number(tr.getAttribute("data-i"));
+  render(false);
+  detail(S.sel);
+  document.getElementById("detail").scrollIntoView({behavior:"smooth", block:"nearest"});
+});
+
+/* ------------------------------------------------------------------ sorting */
+document.getElementById("hrow").addEventListener("click", function(e){
+  var th = e.target.closest("th[data-c]");
+  if (!th) return;
+  var key = COLS[Number(th.getAttribute("data-c"))][1];
+  if (S.sort === key) S.dir = -S.dir; else { S.sort = key; S.dir = 1; }
+  COLS.forEach(function(c, i){
+    var m = document.querySelector('[data-ar="' + i + '"]');
+    m.textContent = (c[1] === S.sort) ? (S.dir > 0 ? "▲" : "▼") : "";
+  });
+  apply();
+});
+
+/* ------------------------------------------------------------------- inputs */
+function on(id, ev, fn){ document.getElementById(id).addEventListener(ev, fn); }
+var t;
+on("q", "input", function(e){
+  clearTimeout(t);
+  var v = e.target.value;
+  t = setTimeout(function(){ S.q = v; apply(); }, 130);
+});
+on("fstate", "change", function(e){ S.state = e.target.value; S.dist = ""; fillDistricts(); apply(); });
+on("fdist", "change", function(e){ S.dist = e.target.value; apply(); });
+["fmulti","fdeliv","factive","fnogeo"].forEach(function(id){
+  on(id, "change", function(e){
+    S[{fmulti:"multi", fdeliv:"deliv", factive:"active", fnogeo:"nogeo"}[id]] = e.target.checked;
+    apply();
+  });
+});
+on("reset", "click", function(){
+  S.q = ""; S.state = ""; S.dist = ""; S.multi = false; S.deliv = false;
+  S.active = true; S.nogeo = false;
+  document.getElementById("q").value = "";
+  selState.value = ""; fillDistricts(); selDist.value = "";
+  document.getElementById("fmulti").checked = false;
+  document.getElementById("fdeliv").checked = false;
+  document.getElementById("factive").checked = true;
+  document.getElementById("fnogeo").checked = false;
+  apply();
+});
+
+/* --------------------------------------------------------------------- copy */
+function toast(msg){
+  var d = document.createElement("div");
+  d.className = "toast"; d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(function(){ d.remove(); }, 2200);
+}
+on("copy", "click", function(){
+  var head = "pincode,primary_office,district,state,n_offices,n_delivery,is_deliverable,"
+           + "n_districts,n_states,centroid_lat,centroid_lon,area_sqkm,has_boundary,status";
+  var lines = [head];
+  for (var i=0;i<S.view.length;i++){
+    var r = ROWS[S.view[i]];
+    lines.push([
+      r[PIN], '"' + (r[OFF] || "").replace(/"/g, '""') + '"',
+      '"' + dname(r[DIST]) + '"', '"' + sname(r[STATE]) + '"',
+      r[NOFF], r[NDEL], r[DELIV], r[NDIST], r[NST],
+      r[LAT] === null ? "" : r[LAT], r[LON] === null ? "" : r[LON],
+      r[AREA] === null ? "" : r[AREA], r[GEO], r[ACTIVE] ? "active" : "retired"
+    ].join(","));
+  }
+  var csv = lines.join("\n");
+  navigator.clipboard.writeText(csv).then(function(){
+    toast(num(S.view.length) + " rows copied as CSV");
+  }, function(){
+    toast("Clipboard blocked — use the CSV files in out/exports/");
+  });
+});
+
+/* -------------------------------------------------------------------- theme */
+on("theme", "click", function(){
+  var cur = document.documentElement.getAttribute("data-theme");
+  var isDark = cur ? cur === "dark"
+    : window.matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+});
+
+/* --------------------------------------------------------------------- boot */
+apply();
+detail(-1);
+})();
+</script>

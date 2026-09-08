@@ -1,0 +1,27 @@
+# secrets
+.env
+
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Raw source payloads: large, immutable, and re-fetchable from data.gov.in.
+# Never version these - raw/postoffices.jsonl alone is ~165k rows.
+raw/
+
+# Build outputs that are reproducible from the pipeline.
+#   ck_pincode.db      -> python build_db.py            (122 MB)
+#   *.geojson          -> python build_geo.py           (209 MB + 51 MB)
+#   explorer.built.html-> python tools/build_explorer.py (1.45 MB)
+out/ck_pincode.db
+out/ck_pincode.db-wal
+out/ck_pincode.db-shm
+out/*.geojson
+web/explorer.built.html
+
+# NOTE: out/exports/ IS committed on purpose (~38 MB). tools/bootstrap_raw.py
+# rebuilds a working database from post_offices.csv, so a fresh clone can build
+# and run offline before anyone has a data.gov.in API key. If these files start
+# churning on every rebuild, move them to Git LFS rather than letting each
+# regeneration add another 25 MB blob to history.

@@ -1,0 +1,98 @@
+# CK PIN Code Master - VPS stack
+#
+# The whole point of this file is that the data outlives the containers.
+#
+#   docker compose up -d db          start Postgres
+#   docker compose run --rm etl build    load / upsert the master
+#   docker compose run --rm etl refresh  monthly diff
+#
+# THE ONE RULE: never run `docker compose down -v`.
+#   `down`     removes containers, keeps volumes  -> data safe
+#   `down -v`  removes the volumes too            -> data gone
+# Redeploying the app, rebuilding the image, upgrading the container, or
+# recreating `db` entirely does NOT touch ck_pgdata. Only `-v` (or an explicit
+# `docker volume rm`) destroys it.
+
+name: ck-pincode
+
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ck_pincode}
+      POSTGRES_USER: ${POSTGRES_USER:-ck}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      # keeps the data directory one level down, so a stray file in the volume
+      # root can never stop Postgres initialising
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ck_pgdata:/var/lib/postgresql/data
+      - ck_pgbackup:/backup
+    # bound to loopback only: the DB is not exposed to the internet.
+    # Reach it from another host over an SSH tunnel, not by opening this port.
+    ports:
+      - "127.0.0.1:5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ck} -d ${POSTGRES_DB:-ck_pincode}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    shm_size: 256mb
+    command:
+      - postgres
+      - -c
+      - max_wal_size=2GB           # bulk upserts of 155k rows checkpoint less
+      - -c
+      - maintenance_work_mem=256MB
+      - -c
+      - work_mem=32MB
+
+  etl:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CK_DB_URL: postgresql://${POSTGRES_USER:-ck}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-ck_pincode}
+      DATA_GOV_KEY: ${DATA_GOV_KEY:-}
+    volumes:
+      # raw payloads and generated exports live on the host, not in the image
+      - ./raw:/app/raw
+      - ./out:/app/out
+      - ./reports:/app/reports
+    entrypoint: ["/app/entrypoint.sh"]
+
+  # One-shot backup. Run from cron on the host:
+  #   0 3 * * * cd /srv/ck-pincode && docker compose run --rm backup
+  backup:
+    image: postgres:17-alpine
+    profiles: ["ops"]
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ck_pgbackup:/backup
+    entrypoint:
+      - sh
+      - -c
+      - |
+        set -e
+        f=/backup/ck_pincode_$$(date +%Y%m%d_%H%M%S).dump
+        pg_dump -h db -U ${POSTGRES_USER:-ck} -d ${POSTGRES_DB:-ck_pincode} \
+                --format=custom --compress=9 --file=$$f
+        echo "[backup] $$f ($$(du -h $$f | cut -f1))"
+        # keep 14 most recent
+        ls -1t /backup/ck_pincode_*.dump | tail -n +15 | xargs -r rm -f
+        echo "[backup] retained: $$(ls -1 /backup/ck_pincode_*.dump | wc -l) dumps"
+
+volumes:
+  # Named volumes. Managed by Docker, stored under /var/lib/docker/volumes,
+  # entirely outside this directory and outside every container's lifecycle.
+  ck_pgdata:
+    name: ck_pgdata
+  ck_pgbackup:
+    name: ck_pgbackup

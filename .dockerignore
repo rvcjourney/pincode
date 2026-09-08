@@ -1,0 +1,16 @@
+.git
+.env
+__pycache__
+*.pyc
+.pytest_cache
+
+# large generated artefacts - bind-mounted at run time, never baked into the image
+out/
+raw/
+reports/
+*.db
+*.db-wal
+*.db-shm
+*.geojson
+*.xlsx
+*.pdf

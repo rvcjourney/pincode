@@ -1,0 +1,1246 @@
+pincode,primary_district,primary_state,n_districts,n_states,n_offices
+853204,Bhagalpur,Bihar,5,1,34
+184121,Jammu,Jammu & Kashmir,4,1,18
+192121,Ananthnag,Jammu & Kashmir,4,1,8
+360490,Rajkot,Gujarat,4,1,23
+392150,Bharuch,Gujarat,4,1,21
+393130,Bharuch,Gujarat,4,1,25
+110094,East Delhi,Delhi,3,1,5
+140119,Rupnagar,Punjab,3,2,7
+140125,Ropar,Punjab,3,2,5
+140133,Rupnagar,Punjab,3,2,6
+141411,Fatehgarh Sahib,Punjab,3,1,9
+193303,Ananthnag,Jammu & Kashmir,3,1,21
+193401,Baramulla,Jammu & Kashmir,3,1,24
+244715,Nainital,Uttarakhand,3,1,19
+272148,Basti,Uttar Pradesh,3,1,12
+393041,Narmada,Gujarat,3,1,13
+393050,Narmada,Gujarat,3,1,19
+393125,Bharuch,Gujarat,3,1,10
+450551,East Nimar,Madhya Pradesh,3,1,17
+450554,Khandwa,Madhya Pradesh,3,1,4
+451441,West Nimar,Madhya Pradesh,3,1,14
+451660,Barwani,Madhya Pradesh,3,1,19
+461111,Hoshangabad,Madhya Pradesh,3,1,29
+461228,Harda,Madhya Pradesh,3,1,23
+461441,Hoshangabad,Madhya Pradesh,3,1,18
+484001,Shahdol,Madhya Pradesh,3,1,28
+605106,Pondicherry,Tamil Nadu,3,2,10
+607403,Null,Null,3,3,3
+612201,Nagapattinam,Tamil Nadu,3,1,7
+621110,Perambalur,Tamil Nadu,3,1,4
+621308,Tiruchirappalli,Tamil Nadu,3,1,10
+673310,Mahe,Puducherry,3,2,4
+754134,Kendrapara,Odisha,3,1,17
+781350,Nalbari,Assam,3,1,9
+782410,Marigaon,Assam,3,1,13
+783134,Goalpara,Assam,3,2,6
+785602,Golaghat,Assam,3,1,9
+793106,East Khasi Hills,Meghalaya,3,1,19
+795118,Senapati,Manipur,3,1,17
+804419,Gaya,Bihar,3,1,14
+804426,Jehanabad,Bihar,3,1,8
+811201,Munger,Bihar,3,1,12
+811311,Lakhisarai,Bihar,3,1,32
+811315,Jamui,Bihar,3,1,22
+813212,Munger,Bihar,3,1,10
+813221,Munger,Bihar,3,1,24
+816102,Sahibganj,Jharkhand,3,1,15
+835302,Lohardaga,Jharkhand,3,1,42
+847307,Darbhanga,Bihar,3,1,7
+854335,Araria,Bihar,3,1,11
+110001,Central Delhi,Delhi,2,1,21
+110003,South Delhi,Delhi,2,1,10
+110006,North Delhi,Delhi,2,1,9
+110020,South Delhi,Delhi,2,1,5
+110029,South West Delhi,Delhi,2,1,3
+110032,East Delhi,Delhi,2,1,13
+110053,East Delhi,Delhi,2,1,10
+110064,West Delhi,Delhi,2,1,5
+110077,South West Delhi,Delhi,2,1,5
+110078,West Delhi,Delhi,2,1,4
+110085,North West Delhi,Delhi,2,1,8
+110090,East Delhi,Delhi,2,1,5
+110093,East Delhi,Delhi,2,1,6
+123021,Mahendragarh,Haryana,2,1,18
+123034,Rewari,Haryana,2,1,8
+123106,Rewari,Haryana,2,1,9
+123303,Mahendragarh,Haryana,2,1,11
+123401,Rewari,Haryana,2,1,28
+123411,Rewari,Haryana,2,1,14
+123412,Rewari,Haryana,2,1,4
+123501,Rewari,Haryana,2,1,13
+124404,Rohtak,Haryana,2,1,3
+124501,Rohtak,Haryana,2,1,17
+125051,Fatehabad,Haryana,2,1,35
+125052,Hisar,Haryana,2,1,23
+125113,Hisar,Haryana,2,1,14
+125120,Fatehabad,Haryana,2,1,16
+134118,Panchkula,Haryana,2,1,10
+134202,Ambala,Haryana,2,1,7
+134203,Ambala,Haryana,2,1,16
+134204,Ambala,Haryana,2,1,7
+140101,Rupnagar,Punjab,2,1,6
+140102,Ropar,Punjab,2,1,8
+140103,Rupnagar,Punjab,2,1,13
+140108,Rupnagar,Punjab,2,1,9
+140112,Rupnagar,Punjab,2,1,5
+140115,Ropar,Punjab,2,1,2
+140117,Rupnagar,Punjab,2,1,13
+140126,Rupnagar,Punjab,2,1,11
+140201,Patiala,Punjab,2,1,2
+140301,Rupnagar,Punjab,2,1,10
+140307,Rupnagar,Punjab,2,1,8
+140406,Fatehgarh Sahib,Punjab,2,1,24
+140412,Fatehgarh Sahib,Punjab,2,1,8
+140413,Mohali,Punjab,2,1,6
+140417,Patiala,Punjab,2,1,11
+140506,Patiala,Punjab,2,1,5
+140602,Patiala,Punjab,2,1,7
+140603,Patiala,Punjab,2,1,3
+140802,Patiala,Punjab,2,1,8
+140901,Mohali,Punjab,2,1,5
+141421,Ludhiana,Punjab,2,1,10
+141801,Fatehgarh Sahib,Punjab,2,1,8
+142043,Moga,Punjab,2,1,11
+143009,Amritsar,Punjab,2,1,5
+143022,Amritsar,Punjab,2,1,9
+143107,Amritsar,Punjab,2,1,11
+143111,Amritsar,Punjab,2,1,11
+143112,Amritsar,Punjab,2,1,10
+143113,Amritsar,Punjab,2,1,7
+143114,Amritsar,Punjab,2,1,10
+143115,Amritsar,Punjab,2,1,9
+143117,Amritsar,Punjab,2,1,6
+143301,Amritsar,Punjab,2,1,7
+143302,Amritsar,Punjab,2,1,9
+143303,Amritsar,Punjab,2,1,6
+143304,Amritsar,Punjab,2,1,12
+143305,Amritsar,Punjab,2,1,11
+143402,Amritsar,Punjab,2,1,15
+143406,Amritsar,Punjab,2,1,7
+143407,Amritsar,Punjab,2,1,6
+143408,Tarn Taran,Punjab,2,1,6
+143409,Amritsar,Punjab,2,1,8
+143410,Amritsar,Punjab,2,1,7
+143411,Amritsar,Punjab,2,1,12
+143412,Tarn Taran,Punjab,2,1,6
+143413,Amritsar,Punjab,2,1,3
+143415,Tarn Taran,Punjab,2,1,9
+143416,Tarn Taran,Punjab,2,1,17
+143419,Tarn Taran,Punjab,2,1,14
+143501,Amritsar,Punjab,2,1,9
+143533,Gurdaspur,Punjab,2,1,4
+143534,Gurdaspur,Punjab,2,1,8
+143601,Amritsar,Punjab,2,1,16
+144029,Jalandhar,Punjab,2,1,5
+144032,Jalandhar,Punjab,2,1,3
+144033,Jalandhar,Punjab,2,1,6
+144224,Hoshiarpur,Punjab,2,1,7
+144402,Kapurthala,Punjab,2,1,11
+144403,Jalandhar,Punjab,2,1,5
+144417,Nawanshahr,Punjab,2,1,2
+144502,Nawanshahr,Punjab,2,1,7
+144511,Jalandhar,Punjab,2,1,5
+144521,Nawanshahr,Punjab,2,1,14
+144522,Nawanshahr,Punjab,2,1,7
+144525,Nawanshahr,Punjab,2,1,5
+144527,Hoshiarpur,Punjab,2,1,10
+144532,Nawanshahr,Punjab,2,1,8
+144603,Kapurthala,Punjab,2,1,12
+144623,Jalandhar,Punjab,2,1,8
+144629,Jalandhar,Punjab,2,1,11
+144702,Jalandhar,Punjab,2,1,12
+145022,Gurdaspur,Punjab,2,1,5
+145023,Gurdaspur,Punjab,2,1,6
+145024,Pathankot,Punjab,2,1,2
+145025,Gurdaspur,Punjab,2,1,12
+145026,Gurdaspur,Punjab,2,1,3
+145027,Gurdaspur,Punjab,2,1,3
+145029,Gurdaspur,Punjab,2,1,3
+145101,Gurdaspur,Punjab,2,1,5
+146115,Hoshiarpur,Punjab,2,1,3
+147203,Patiala,Punjab,2,1,11
+148024,Sangrur,Punjab,2,1,16
+148025,Sangrur,Punjab,2,1,11
+148102,Barnala,Punjab,2,1,5
+148106,Sangrur,Punjab,2,1,11
+148107,Barnala,Punjab,2,1,6
+148108,Barnala,Punjab,2,1,9
+151202,Faridkot,Punjab,2,1,10
+151208,Faridkot,Punjab,2,1,6
+151501,Bathinda,Punjab,2,1,8
+151509,Bathinda,Punjab,2,1,13
+151510,Mansa,Punjab,2,1,5
+152022,Firozpur,Punjab,2,1,11
+152025,Muktsar,Punjab,2,1,8
+152028,Firozpur,Punjab,2,1,12
+160003,Chandigarh,Chandigarh,2,2,3
+160014,Chandigarh,Chandigarh,2,2,5
+160022,Chandigarh,Chandigarh,2,2,5
+171226,Shimla,Himachal Pradesh,2,1,10
+172001,Shimla,Himachal Pradesh,2,1,18
+172030,Shimla,Himachal Pradesh,2,1,5
+172101,Shimla,Himachal Pradesh,2,1,12
+172201,Shimla,Himachal Pradesh,2,1,8
+173217,Solan,Himachal Pradesh,2,1,9
+173223,Sirmaur,Himachal Pradesh,2,1,9
+173229,Solan,Himachal Pradesh,2,1,9
+175013,Kangra,Himachal Pradesh,2,1,8
+175106,Mandi,Himachal Pradesh,2,1,10
+175123,Kullu,Himachal Pradesh,2,1,25
+175125,Kullu,Himachal Pradesh,2,1,11
+175134,Kullu,Himachal Pradesh,2,1,12
+175141,Kullu,Himachal Pradesh,2,1,4
+177033,Hamirpur(hp),Himachal Pradesh,2,1,6
+177041,Hamirpur(hp),Himachal Pradesh,2,1,7
+177110,Una,Himachal Pradesh,2,1,10
+177114,Kangra,Himachal Pradesh,2,1,4
+182124,Udhampur,Jammu & Kashmir,2,1,8
+182144,Doda,Jammu & Kashmir,2,1,14
+182204,Doda,Jammu & Kashmir,2,1,12
+182311,Udhampur,Jammu & Kashmir,2,1,12
+182320,Udhampur,Jammu & Kashmir,2,1,3
+184205,Kathua,Jammu & Kashmir,2,1,11
+185121,Poonch,Jammu & Kashmir,2,1,19
+185203,Udhampur,Jammu & Kashmir,2,1,16
+185233,Rajauri,Jammu & Kashmir,2,1,12
+190015,Budgam,Jammu & Kashmir,2,1,4
+190019,Srinagar,Jammu & Kashmir,2,1,2
+191103,Ananthnag,Jammu & Kashmir,2,1,4
+191112,Budgam,Jammu & Kashmir,2,1,7
+192122,Ananthnag,Jammu & Kashmir,2,1,8
+192124,Ananthnag,Jammu & Kashmir,2,1,20
+192125,Ananthnag,Jammu & Kashmir,2,1,8
+192211,Ananthnag,Jammu & Kashmir,2,1,8
+192221,Ananthnag,Jammu & Kashmir,2,1,14
+192231,Ananthnag,Jammu & Kashmir,2,1,24
+192305,Ananthnag,Jammu & Kashmir,2,1,9
+193302,Kupwara,Jammu & Kashmir,2,1,12
+193503,Baramulla,Jammu & Kashmir,2,1,13
+194105,Kargil,Jammu & Kashmir,2,1,7
+201301,Gautam Buddha Nagar,Uttar Pradesh,2,1,4
+201303,Gautam Buddha Nagar,Uttar Pradesh,2,1,4
+202002,Aligarh,Uttar Pradesh,2,1,33
+202121,Aligarh,Uttar Pradesh,2,1,11
+202124,Aligarh,Uttar Pradesh,2,1,14
+202139,Aligarh,Uttar Pradesh,2,1,5
+203141,Gautam Buddha Nagar,Uttar Pradesh,2,1,14
+203155,Gautam Buddha Nagar,Uttar Pradesh,2,1,8
+203201,Gautam Buddha Nagar,Uttar Pradesh,2,1,5
+203202,Gautam Buddha Nagar,Uttar Pradesh,2,1,8
+203203,Gautam Buddha Nagar,Uttar Pradesh,2,1,12
+204102,Hathras,Uttar Pradesh,2,1,10
+204213,Hathras,Uttar Pradesh,2,1,9
+204215,Hathras,Uttar Pradesh,2,1,18
+205262,Mainpuri,Uttar Pradesh,2,1,17
+207301,Etah,Uttar Pradesh,2,1,15
+208001,Kanpur Nagar,Uttar Pradesh,2,1,29
+209101,Kanpur Dehat,Uttar Pradesh,2,1,17
+209203,Kanpur Dehat,Uttar Pradesh,2,1,7
+209206,Kanpur Dehat,Uttar Pradesh,2,1,29
+209721,Kannauj,Uttar Pradesh,2,1,17
+210202,Banda,Uttar Pradesh,2,1,15
+210203,Banda,Uttar Pradesh,2,1,17
+210206,Chitrakoot,Uttar Pradesh,2,1,16
+210207,Chitrakoot,Uttar Pradesh,2,1,11
+210208,Chitrakoot,Uttar Pradesh,2,1,11
+210209,Chitrakoot,Uttar Pradesh,2,1,17
+210421,Mahoba,Uttar Pradesh,2,1,10
+210424,Mahoba,Uttar Pradesh,2,1,16
+210425,Mahoba,Uttar Pradesh,2,1,5
+210427,Mahoba,Uttar Pradesh,2,1,10
+210429,Mahoba,Uttar Pradesh,2,1,20
+210431,Hamirpur,Uttar Pradesh,2,1,17
+210504,Hamirpur,Uttar Pradesh,2,1,12
+210507,Hamirpur,Uttar Pradesh,2,1,23
+211011,Allahabad,Uttar Pradesh,2,1,5
+212201,Kaushambi,Uttar Pradesh,2,1,11
+212203,Kaushambi,Uttar Pradesh,2,1,8
+212204,Kaushambi,Uttar Pradesh,2,1,5
+212208,Allahabad,Uttar Pradesh,2,1,8
+212213,Allahabad,Uttar Pradesh,2,1,6
+212216,Kaushambi,Uttar Pradesh,2,1,18
+212217,Kaushambi,Uttar Pradesh,2,1,21
+212218,Kaushambi,Uttar Pradesh,2,1,7
+212401,Allahabad,Uttar Pradesh,2,1,13
+212507,Allahabad,Uttar Pradesh,2,1,14
+221115,Chandauli,Uttar Pradesh,2,1,8
+221304,Sant Ravidas Nagar,Uttar Pradesh,2,1,11
+221306,Varanasi,Uttar Pradesh,2,1,4
+221401,Sant Ravidas Nagar,Uttar Pradesh,2,1,8
+221402,Sant Ravidas Nagar,Uttar Pradesh,2,1,10
+221602,Mau,Uttar Pradesh,2,1,8
+221603,Mau,Uttar Pradesh,2,1,13
+221706,Mau,Uttar Pradesh,2,1,13
+222301,Sultanpur,Uttar Pradesh,2,1,5
+223222,Azamgarh,Uttar Pradesh,2,1,7
+224116,Barabanki,Uttar Pradesh,2,1,9
+224117,Barabanki,Uttar Pradesh,2,1,6
+224118,Barabanki,Uttar Pradesh,2,1,16
+224119,Barabanki,Uttar Pradesh,2,1,7
+224120,Barabanki,Uttar Pradesh,2,1,10
+224121,Faizabad,Uttar Pradesh,2,1,15
+224123,Faizabad,Uttar Pradesh,2,1,9
+224127,Faizabad,Uttar Pradesh,2,1,10
+224135,Faizabad,Uttar Pradesh,2,1,6
+224141,Faizabad,Uttar Pradesh,2,1,15
+224152,Ambedkar Nagar,Uttar Pradesh,2,1,12
+224153,Faizabad,Uttar Pradesh,2,1,12
+224158,Faizabad,Uttar Pradesh,2,1,12
+224161,Faizabad,Uttar Pradesh,2,1,16
+224164,Faizabad,Uttar Pradesh,2,1,14
+224171,Ambedkar Nagar,Uttar Pradesh,2,1,6
+224182,Faizabad,Uttar Pradesh,2,1,5
+224189,Faizabad,Uttar Pradesh,2,1,10
+224195,Ambedkar Nagar,Uttar Pradesh,2,1,9
+224201,Faizabad,Uttar Pradesh,2,1,9
+224202,Ambedkar Nagar,Uttar Pradesh,2,1,4
+224203,Ambedkar Nagar,Uttar Pradesh,2,1,8
+224205,Ambedkar Nagar,Uttar Pradesh,2,1,11
+224206,Faizabad,Uttar Pradesh,2,1,12
+224207,Faizabad,Uttar Pradesh,2,1,8
+224208,Faizabad,Uttar Pradesh,2,1,12
+224209,Faizabad,Uttar Pradesh,2,1,13
+224228,Faizabad,Uttar Pradesh,2,1,7
+224229,Faizabad,Uttar Pradesh,2,1,6
+224234,Ambedkar Nagar,Uttar Pradesh,2,1,10
+224284,Faizabad,Uttar Pradesh,2,1,6
+231210,Mirzapur,Uttar Pradesh,2,1,22
+232101,Chandauli,Uttar Pradesh,2,1,15
+232102,Chandauli,Uttar Pradesh,2,1,11
+232103,Chandauli,Uttar Pradesh,2,1,17
+232104,Chandauli,Uttar Pradesh,2,1,15
+232105,Chandauli,Uttar Pradesh,2,1,9
+232106,Chandauli,Uttar Pradesh,2,1,21
+232107,Chandauli,Uttar Pradesh,2,1,6
+232108,Chandauli,Uttar Pradesh,2,1,14
+232109,Chandauli,Uttar Pradesh,2,1,15
+232110,Chandauli,Uttar Pradesh,2,1,20
+232111,Chandauli,Uttar Pradesh,2,1,5
+232118,Chandauli,Uttar Pradesh,2,1,13
+243003,Bareilly,Uttar Pradesh,2,1,15
+243123,Bareilly,Uttar Pradesh,2,1,11
+244102,Moradabad,Uttar Pradesh,2,1,15
+244304,Moradabad,Uttar Pradesh,2,1,9
+244501,Jyotiba Phule Nagar,Uttar Pradesh,2,1,18
+244713,Udham Singh Nagar,Uttarakhand,2,1,17
+244923,Rampur,Uttar Pradesh,2,1,7
+244925,Rampur,Uttar Pradesh,2,1,10
+246429,Chamoli,Uttarakhand,2,1,16
+246763,Bijnor,Uttar Pradesh,2,2,23
+247662,Saharanpur,Uttar Pradesh,2,2,13
+247665,Haridwar,Uttarakhand,2,2,4
+247670,Haridwar,Uttarakhand,2,1,10
+249128,Uttarkashi,Uttarakhand,2,1,14
+249131,Tehri Garhwal,Uttarakhand,2,1,15
+249141,Uttarkashi,Uttarakhand,2,1,15
+249165,Tehri Garhwal,Uttarakhand,2,1,20
+249196,Uttarkashi,Uttarakhand,2,1,15
+262201,Pilibhit,Uttar Pradesh,2,1,31
+262203,Pilibhit,Uttar Pradesh,2,1,20
+262302,Pilibhit,Uttar Pradesh,2,1,3
+262308,Udham Singh Nagar,Uttarakhand,2,1,16
+262523,Champawat,Uttarakhand,2,1,22
+262561,Pithoragarh,Uttarakhand,2,1,7
+262580,Champawat,Uttarakhand,2,1,5
+263138,Nainital,Uttarakhand,2,1,6
+263624,Almora,Uttarakhand,2,1,13
+263628,Bageshwar,Uttarakhand,2,1,13
+271201,Balrampur,Uttar Pradesh,2,1,22
+271204,Gonda,Uttar Pradesh,2,1,10
+271208,Balrampur,Uttar Pradesh,2,1,15
+271209,Gonda,Uttar Pradesh,2,1,5
+271305,Gonda,Uttar Pradesh,2,1,12
+271307,Balrampur,Uttar Pradesh,2,1,13
+271504,Gonda,Uttar Pradesh,2,1,26
+271604,Balrampur,Uttar Pradesh,2,1,23
+271802,Bahraich,Uttar Pradesh,2,1,17
+271804,Shrawasti,Uttar Pradesh,2,1,11
+271821,Bahraich,Uttar Pradesh,2,1,11
+271845,Shrawasti,Uttar Pradesh,2,1,12
+271855,Bahraich,Uttar Pradesh,2,1,33
+271865,Bahraich,Uttar Pradesh,2,1,32
+271870,Bahraich,Uttar Pradesh,2,1,11
+271871,Bahraich,Uttar Pradesh,2,1,15
+271875,Bahraich,Uttar Pradesh,2,1,14
+272125,Basti,Uttar Pradesh,2,1,21
+272126,Basti,Uttar Pradesh,2,1,12
+272129,Basti,Uttar Pradesh,2,1,7
+272151,Basti,Uttar Pradesh,2,1,14
+272152,Siddharthnagar,Uttar Pradesh,2,1,22
+272153,Siddharthnagar,Uttar Pradesh,2,1,37
+272154,Siddharthnagar,Uttar Pradesh,2,1,14
+272165,Sant Kabir Nagar,Uttar Pradesh,2,1,20
+272170,Basti,Uttar Pradesh,2,1,23
+272175,Sant Kabir Nagar,Uttar Pradesh,2,1,29
+272191,Siddharthnagar,Uttar Pradesh,2,1,8
+272194,Basti,Uttar Pradesh,2,1,11
+272201,Siddharthnagar,Uttar Pradesh,2,1,9
+273157,Maharajganj,Uttar Pradesh,2,1,14
+273163,Maharajganj,Uttar Pradesh,2,1,18
+273301,Maharajganj,Uttar Pradesh,2,1,9
+273303,Maharajganj,Uttar Pradesh,2,1,27
+273306,Gorakhpur,Uttar Pradesh,2,1,12
+273405,Gorakhpur,Uttar Pradesh,2,1,7
+274402,Kushinagar,Uttar Pradesh,2,1,15
+275101,Mau,Uttar Pradesh,2,1,7
+275301,Mau,Uttar Pradesh,2,1,12
+275302,Mau,Uttar Pradesh,2,1,6
+275304,Mau,Uttar Pradesh,2,1,6
+275305,Mau,Uttar Pradesh,2,1,15
+275306,Mau,Uttar Pradesh,2,1,5
+275307,Mau,Uttar Pradesh,2,1,9
+276126,Azamgarh,Uttar Pradesh,2,1,8
+276129,Mau,Uttar Pradesh,2,1,17
+276305,Azamgarh,Uttar Pradesh,2,1,10
+276306,Azamgarh,Uttar Pradesh,2,1,10
+276402,Mau,Uttar Pradesh,2,1,11
+276403,Mau,Uttar Pradesh,2,1,20
+276405,Mau,Uttar Pradesh,2,1,8
+281001,Mathura,Uttar Pradesh,2,1,27
+281308,Mathura,Uttar Pradesh,2,1,10
+281401,Mathura,Uttar Pradesh,2,1,9
+284123,Lalitpur,Uttar Pradesh,2,1,15
+284203,Jhansi,Uttar Pradesh,2,1,9
+284303,Jhansi,Uttar Pradesh,2,1,27
+284306,Jhansi,Uttar Pradesh,2,1,7
+284405,Lalitpur,Uttar Pradesh,2,1,18
+285125,Jalaun,Uttar Pradesh,2,1,14
+285205,Jalaun,Uttar Pradesh,2,1,30
+303302,Jaipur,Rajasthan,2,1,8
+303305,Jaipur,Rajasthan,2,1,11
+303503,Dausa,Rajasthan,2,1,21
+303507,Dausa,Rajasthan,2,1,9
+303509,Dausa,Rajasthan,2,1,10
+305922,Ajmer,Rajasthan,2,1,7
+305925,Ajmer,Rajasthan,2,1,9
+307515,Jalor,Rajasthan,2,1,8
+313206,Rajsamand,Rajasthan,2,1,5
+313704,Rajsamand,Rajasthan,2,1,16
+322033,Sawai Madhopur,Rajasthan,2,1,7
+322202,Sawai Madhopur,Rajasthan,2,1,10
+322203,Karauli,Rajasthan,2,1,10
+322204,Karauli,Rajasthan,2,1,7
+322212,Sawai Madhopur,Rajasthan,2,1,7
+322215,Karauli,Rajasthan,2,1,11
+322218,Karauli,Rajasthan,2,1,16
+322219,Sawai Madhopur,Rajasthan,2,1,13
+322220,Karauli,Rajasthan,2,1,12
+322243,Karauli,Rajasthan,2,1,16
+325202,Baran,Rajasthan,2,1,9
+325207,Kota,Rajasthan,2,1,8
+326501,Jhalawar,Rajasthan,2,1,10
+326517,Kota,Rajasthan,2,1,4
+331801,Bikaner,Rajasthan,2,1,5
+331803,Bikaner,Rajasthan,2,1,31
+331811,Bikaner,Rajasthan,2,1,14
+335024,Ganganagar,Rajasthan,2,1,15
+342302,Jodhpur,Rajasthan,2,1,7
+345001,Jaisalmer,Rajasthan,2,1,44
+345021,Jaisalmer,Rajasthan,2,1,21
+360055,Rajkot,Gujarat,2,1,14
+360110,Rajkot,Gujarat,2,1,26
+360480,Jamnagar,Gujarat,2,1,7
+360510,Jamnagar,Gujarat,2,1,20
+360530,Jamnagar,Gujarat,2,1,14
+360590,Porbandar,Gujarat,2,1,17
+362230,Porbandar,Gujarat,2,1,9
+362620,Junagadh,Gujarat,2,1,23
+362650,Porbandar,Gujarat,2,1,16
+364530,Amreli,Gujarat,2,1,10
+365440,Amreli,Gujarat,2,1,16
+365480,Amreli,Gujarat,2,1,15
+380060,Ahmedabad,Gujarat,2,1,5
+382115,Ahmedabad,Gujarat,2,1,7
+382120,Ahmedabad,Gujarat,2,1,21
+382130,Ahmedabad,Gujarat,2,1,19
+382170,Ahmedabad,Gujarat,2,1,13
+382315,Gandhi Nagar,Gujarat,2,1,15
+382421,Gandhi Nagar,Gujarat,2,1,7
+382424,Ahmedabad,Gujarat,2,1,3
+382433,Ahmedabad,Gujarat,2,1,9
+383345,Sabarkantha,Gujarat,2,1,14
+384260,Mahesana,Gujarat,2,1,3
+387210,Anand,Gujarat,2,1,3
+387345,Kheda,Gujarat,2,1,3
+387710,Kheda,Gujarat,2,1,6
+388140,Anand,Gujarat,2,1,5
+388180,Anand,Gujarat,2,1,21
+388215,Kheda,Gujarat,2,1,3
+388220,Anand,Gujarat,2,1,12
+388235,Kheda,Gujarat,2,1,9
+388440,Anand,Gujarat,2,1,4
+388710,Panch Mahals,Gujarat,2,1,8
+389110,Panch Mahals,Gujarat,2,1,16
+389172,Dahod,Gujarat,2,1,15
+389180,Dahod,Gujarat,2,1,24
+389190,Dahod,Gujarat,2,1,15
+389380,Dahod,Gujarat,2,1,35
+391110,Vadodara,Gujarat,2,1,21
+391121,Narmada,Gujarat,2,1,13
+391810,Bharuch,Gujarat,2,1,5
+392012,Bharuch,Gujarat,2,1,14
+392015,Bharuch,Gujarat,2,1,7
+392020,Bharuch,Gujarat,2,1,22
+392025,Bharuch,Gujarat,2,1,9
+392030,Bharuch,Gujarat,2,1,4
+392040,Bharuch,Gujarat,2,1,5
+392110,Bharuch,Gujarat,2,1,11
+392130,Bharuch,Gujarat,2,1,14
+392140,Bharuch,Gujarat,2,1,19
+392160,Bharuch,Gujarat,2,1,4
+392170,Bharuch,Gujarat,2,1,7
+392180,Bharuch,Gujarat,2,1,3
+392210,Bharuch,Gujarat,2,1,17
+392220,Vadodara,Gujarat,2,1,13
+393001,Bharuch,Gujarat,2,1,23
+393010,Bharuch,Gujarat,2,1,4
+393020,Bharuch,Gujarat,2,1,8
+393025,Narmada,Gujarat,2,1,11
+393040,Narmada,Gujarat,2,1,19
+393105,Vadodara,Gujarat,2,1,8
+393110,Bharuch,Gujarat,2,1,17
+393115,Bharuch,Gujarat,2,1,14
+393120,Narmada,Gujarat,2,1,15
+393135,Bharuch,Gujarat,2,1,22
+393145,Narmada,Gujarat,2,1,21
+393150,Narmada,Gujarat,2,1,5
+393151,Narmada,Gujarat,2,1,18
+393155,Narmada,Gujarat,2,1,6
+394120,Surat,Gujarat,2,1,6
+394365,Surat,Gujarat,2,1,13
+394375,Surat,Gujarat,2,1,17
+394380,Surat,Gujarat,2,1,13
+394630,Surat,Gujarat,2,1,14
+394633,Surat,Gujarat,2,1,7
+394635,Surat,Gujarat,2,1,13
+394641,Surat,Gujarat,2,1,4
+394651,Surat,Gujarat,2,1,11
+394655,Surat,Gujarat,2,1,15
+394680,Surat,Gujarat,2,1,4
+394715,Surat,Gujarat,2,1,9
+394716,The Dangs,Gujarat,2,1,12
+394730,The Dangs,Gujarat,2,1,15
+394810,Bharuch,Gujarat,2,1,8
+396051,Valsad,Gujarat,2,1,22
+396193,Valsad,Gujarat,2,2,6
+396230,Dadra & Nagar Haveli,Dadra & Nagar Haveli & Daman & DIU,2,2,28
+396235,Valsad,Gujarat,2,2,7
+396240,Dadra & Nagar Haveli,Dadra & Nagar Haveli & Daman & DIU,2,2,9
+400001,Mumbai,Maharashtra,2,1,7
+403105,North Goa,GOA,2,1,2
+403107,South Goa,GOA,2,1,5
+403401,South Goa,GOA,2,1,13
+403404,South Goa,GOA,2,1,3
+403406,North Goa,GOA,2,1,6
+412206,Pune,Maharashtra,2,1,38
+413502,Osmanabad,Maharashtra,2,1,15
+413510,Osmanabad,Maharashtra,2,1,5
+413511,Latur,Maharashtra,2,1,17
+413514,Osmanabad,Maharashtra,2,1,11
+413516,Osmanabad,Maharashtra,2,1,12
+413517,Latur,Maharashtra,2,1,31
+413518,Latur,Maharashtra,2,1,8
+413521,Osmanabad,Maharashtra,2,1,19
+413523,Osmanabad,Maharashtra,2,1,7
+413524,Latur,Maharashtra,2,1,8
+413527,Latur,Maharashtra,2,1,13
+413529,Latur,Maharashtra,2,1,5
+413531,Osmanabad,Maharashtra,2,1,29
+413532,Latur,Maharashtra,2,1,11
+413544,Osmanabad,Maharashtra,2,1,11
+413581,Osmanabad,Maharashtra,2,1,5
+413582,Osmanabad,Maharashtra,2,1,30
+413607,Osmanabad,Maharashtra,2,1,13
+415715,Ratnagiri,Maharashtra,2,1,7
+416704,Ratnagiri,Maharashtra,2,1,25
+425413,Nandurbar,Maharashtra,2,1,11
+425422,Nandurbar,Maharashtra,2,1,5
+431114,Jalna,Maharashtra,2,1,17
+431121,Aurangabad,Maharashtra,2,1,14
+431132,Jalna,Maharashtra,2,1,7
+431134,Aurangabad,Maharashtra,2,1,8
+431137,Aurangabad,Maharashtra,2,1,5
+431202,Jalna,Maharashtra,2,1,13
+431501,Jalna,Maharashtra,2,1,15
+431503,Parbhani,Maharashtra,2,1,16
+431509,Parbhani,Maharashtra,2,1,28
+431512,Hingoli,Maharashtra,2,1,12
+431522,Osmanabad,Maharashtra,2,1,6
+441207,Chandrapur,Maharashtra,2,1,13
+442302,Wardha,Maharashtra,2,1,10
+442504,Gadchiroli,Maharashtra,2,1,15
+442605,Gadchiroli,Maharashtra,2,1,24
+442606,Gadchiroli,Maharashtra,2,1,15
+442710,Gadchiroli,Maharashtra,2,1,6
+442903,Chandrapur,Maharashtra,2,1,22
+444004,Washim,Maharashtra,2,1,4
+444106,Akola,Maharashtra,2,1,12
+444506,Washim,Maharashtra,2,1,12
+450001,East Nimar,Madhya Pradesh,2,1,25
+450112,East Nimar,Madhya Pradesh,2,1,7
+450116,East Nimar,Madhya Pradesh,2,1,20
+450117,East Nimar,Madhya Pradesh,2,1,18
+450221,East Nimar,Madhya Pradesh,2,1,9
+450331,East Nimar,Madhya Pradesh,2,1,26
+450332,East Nimar,Madhya Pradesh,2,1,10
+450337,East Nimar,Madhya Pradesh,2,1,7
+450445,East Nimar,Madhya Pradesh,2,1,14
+450661,East Nimar,Madhya Pradesh,2,1,12
+450771,East Nimar,Madhya Pradesh,2,1,14
+451115,West Nimar,Madhya Pradesh,2,1,18
+451332,West Nimar,Madhya Pradesh,2,1,10
+451442,West Nimar,Madhya Pradesh,2,1,10
+457550,Ratlam,Madhya Pradesh,2,1,11
+457885,Jhabua,Madhya Pradesh,2,1,5
+457887,Jhabua,Madhya Pradesh,2,1,21
+457888,Jhabua,Madhya Pradesh,2,1,11
+458339,Mandsaur,Madhya Pradesh,2,1,6
+458553,Mandsaur,Madhya Pradesh,2,1,6
+460663,Betul,Madhya Pradesh,2,1,15
+461331,Hoshangabad,Madhya Pradesh,2,1,30
+461771,Hoshangabad,Madhya Pradesh,2,1,9
+461990,Hoshangabad,Madhya Pradesh,2,1,22
+464240,Vidisha,Madhya Pradesh,2,1,5
+464993,Raisen,Madhya Pradesh,2,1,13
+465693,Rajgarh,Madhya Pradesh,2,1,11
+472001,Tikamgarh,Madhya Pradesh,2,1,16
+472010,Tikamgarh,Madhya Pradesh,2,1,10
+472111,Tikamgarh,Madhya Pradesh,2,1,16
+473331,Ashok Nagar,Madhya Pradesh,2,1,27
+473443,Ashok Nagar,Madhya Pradesh,2,1,11
+473885,Shivpuri,Madhya Pradesh,2,1,7
+475110,Gwalior,Madhya Pradesh,2,1,18
+475115,Gwalior,Madhya Pradesh,2,1,11
+475686,Datia,Madhya Pradesh,2,1,12
+477332,Bhind,Madhya Pradesh,2,1,8
+480441,Chhindwara,Madhya Pradesh,2,1,13
+481226,Balaghat,Madhya Pradesh,2,1,14
+481661,Mandla,Madhya Pradesh,2,1,23
+481665,Mandla,Madhya Pradesh,2,1,4
+481672,Dindori,Madhya Pradesh,2,1,13
+481885,Mandla,Madhya Pradesh,2,1,11
+483220,Jabalpur,Madhya Pradesh,2,1,15
+483222,Katni,Madhya Pradesh,2,1,17
+483225,Katni,Madhya Pradesh,2,1,20
+483334,Katni,Madhya Pradesh,2,1,14
+483440,Katni,Madhya Pradesh,2,1,12
+483880,Katni,Madhya Pradesh,2,1,12
+484117,Shahdol,Madhya Pradesh,2,1,2
+484330,Anuppur,Madhya Pradesh,2,1,6
+484440,Anuppur,Madhya Pradesh,2,1,7
+484444,Anuppur,Madhya Pradesh,2,1,3
+484446,Shahdol,Madhya Pradesh,2,1,7
+484555,Umaria,Madhya Pradesh,2,1,12
+484660,Umaria,Madhya Pradesh,2,1,11
+484770,Shahdol,Madhya Pradesh,2,1,14
+484771,Shahdol,Madhya Pradesh,2,1,19
+484881,Anuppur,Madhya Pradesh,2,1,27
+485331,Satna,Madhya Pradesh,2,1,21
+486661,Sidhi,Madhya Pradesh,2,1,40
+486669,Sidhi,Madhya Pradesh,2,1,20
+486886,Sidhi,Madhya Pradesh,2,1,18
+486887,Singrauli,Madhya Pradesh,2,1,2
+486889,Singrauli,Madhya Pradesh,2,1,4
+491888,Rajnandgaon,Chattisgarh,2,1,12
+492112,Raipur,Chattisgarh,2,1,14
+493551,Mahasamund,Chattisgarh,2,1,20
+493663,Dhamtari,Chattisgarh,2,1,20
+494111,Dantewada,Chattisgarh,2,1,17
+494448,Bijapur(cgh),Chattisgarh,2,1,9
+494450,Bijapur(cgh),Chattisgarh,2,1,13
+494552,Dantewada,Chattisgarh,2,1,21
+495118,Korba,Chattisgarh,2,1,13
+495552,Janjgir-champa,Chattisgarh,2,1,12
+495660,Korba,Chattisgarh,2,1,11
+495661,Korba,Chattisgarh,2,1,12
+495663,Janjgir-champa,Chattisgarh,2,1,5
+495668,Janjgir-champa,Chattisgarh,2,1,30
+495684,Korba,Chattisgarh,2,1,3
+495686,Korba,Chattisgarh,2,1,2
+495690,Korba,Chattisgarh,2,1,15
+495691,Korba,Chattisgarh,2,1,17
+496242,Jashpur,Chattisgarh,2,1,6
+497118,Surguja,Chattisgarh,2,1,21
+500005,Hyderabad,Telangana,2,1,5
+500008,Hyderabad,Telangana,2,1,9
+500018,K.v.rangareddy,Telangana,2,1,8
+500030,K.v.rangareddy,Telangana,2,1,4
+500032,K.v.rangareddy,Telangana,2,1,2
+500035,K.v.rangareddy,Telangana,2,1,3
+500039,K.v.rangareddy,Telangana,2,1,3
+500043,K.v.rangareddy,Telangana,2,1,6
+500048,K.v.rangareddy,Telangana,2,1,2
+500049,K.v.rangareddy,Telangana,2,1,2
+500052,K.v.rangareddy,Telangana,2,1,4
+500060,K.v.rangareddy,Telangana,2,1,3
+500068,Hyderabad,Telangana,2,1,2
+500070,K.v.rangareddy,Telangana,2,1,3
+500074,Hyderabad,Telangana,2,1,2
+500075,K.v.rangareddy,Telangana,2,1,10
+500076,K.v.rangareddy,Telangana,2,1,3
+500078,Hyderabad,Telangana,2,1,8
+500079,K.v.rangareddy,Telangana,2,1,3
+500084,K.v.rangareddy,Telangana,2,1,2
+500088,Hyderabad,Telangana,2,1,6
+500090,Hyderabad,Telangana,2,1,3
+500100,K.v.rangareddy,Telangana,2,1,3
+501102,K.v.rangareddy,Telangana,2,1,23
+501301,Hyderabad,Telangana,2,1,13
+501401,Hyderabad,Telangana,2,1,10
+509217,K.v.rangareddy,Telangana,2,1,5
+509325,Mahabub Nagar,Telangana,2,1,11
+509335,Mahabub Nagar,Telangana,2,1,8
+509339,Mahabub Nagar,Telangana,2,1,12
+509358,Mahabub Nagar,Telangana,2,1,5
+509371,Mahabub Nagar,Telangana,2,1,15
+509410,Mahabub Nagar,Telangana,2,1,7
+515465,Ananthapur,Andhra Pradesh,2,1,15
+531162,Visakhapatnam,Andhra Pradesh,2,1,21
+532122,Srikakulam,Andhra Pradesh,2,1,17
+532127,Srikakulam,Andhra Pradesh,2,1,21
+532407,Srikakulam,Andhra Pradesh,2,1,12
+533296,East Godavari,Andhra Pradesh,2,2,8
+533464,East Godavari,Andhra Pradesh,2,2,12
+534315,West Godavari,Andhra Pradesh,2,1,20
+535005,Vizianagaram,Andhra Pradesh,2,1,9
+535125,Vizianagaram,Andhra Pradesh,2,1,10
+535128,Vizianagaram,Andhra Pradesh,2,1,14
+535145,Visakhapatnam,Andhra Pradesh,2,1,25
+535183,Vizianagaram,Andhra Pradesh,2,1,18
+535250,Vizianagaram,Andhra Pradesh,2,1,15
+535273,Vizianagaram,Andhra Pradesh,2,1,10
+560046,Bangalore,Karnataka,2,2,2
+560060,Bangalore Rural,Karnataka,2,1,3
+560067,Bangalore,Karnataka,2,1,8
+560068,Bangalore,Karnataka,2,1,4
+560082,Bangalore Rural,Karnataka,2,1,7
+560083,Bangalore,Karnataka,2,1,5
+560090,Bangalore Rural,Karnataka,2,1,3
+560091,Bangalore,Karnataka,2,1,4
+560099,Bangalore,Karnataka,2,1,4
+561201,Ramanagar,Karnataka,2,1,7
+561206,Chikkaballapur,Karnataka,2,1,4
+561207,Chikkaballapur,Karnataka,2,1,16
+561208,Chikkaballapur,Karnataka,2,1,14
+561209,Chikkaballapur,Karnataka,2,1,8
+561210,Kolar,Karnataka,2,1,8
+561211,Kolar,Karnataka,2,1,9
+561212,Chikkaballapur,Karnataka,2,1,5
+561213,Kolar,Karnataka,2,1,11
+561228,Kolar,Karnataka,2,1,6
+562101,Chikkaballapur,Karnataka,2,1,18
+562102,Chikkaballapur,Karnataka,2,1,10
+562103,Kolar,Karnataka,2,1,9
+562104,Kolar,Karnataka,2,1,12
+562105,Chikkaballapur,Karnataka,2,1,11
+562119,Ramanagar,Karnataka,2,1,13
+562120,Ramanagar,Karnataka,2,1,15
+562130,Bangalore,Karnataka,2,1,7
+562162,Bangalore Rural,Karnataka,2,1,10
+562164,Bangalore Rural,Karnataka,2,1,6
+563121,Kolar,Karnataka,2,1,8
+563123,Kolar,Karnataka,2,1,7
+563124,Chikkaballapur,Karnataka,2,1,7
+563125,Kolar,Karnataka,2,1,23
+563138,Kolar,Karnataka,2,1,8
+563146,Kolar,Karnataka,2,1,7
+563159,Chikkaballapur,Karnataka,2,1,7
+571110,Mysore,Karnataka,2,1,7
+571128,Chamrajnagar,Karnataka,2,1,10
+574107,Udupi,Karnataka,2,1,5
+574109,Dakshina Kannada,Karnataka,2,1,4
+574144,Dakshina Kannada,Karnataka,2,1,9
+574234,Kodagu,Karnataka,2,1,4
+574314,Dakshina Kannada,Karnataka,2,1,4
+577213,Davangere,Karnataka,2,1,16
+577216,Shimoga,Karnataka,2,1,8
+577225,Davangere,Karnataka,2,1,6
+577243,Shimoga,Karnataka,2,1,6
+577427,Shimoga,Karnataka,2,1,19
+577501,Chitradurga,Karnataka,2,1,6
+577518,Chitradurga,Karnataka,2,1,6
+577557,Chitradurga,Karnataka,2,1,9
+581119,Haveri,Karnataka,2,1,10
+583226,Koppal,Karnataka,2,1,7
+583227,Koppal,Karnataka,2,1,16
+583229,Koppal,Karnataka,2,1,13
+583235,Koppal,Karnataka,2,1,7
+583238,Koppal,Karnataka,2,1,18
+583268,Koppal,Karnataka,2,1,7
+583277,Koppal,Karnataka,2,1,20
+583279,Koppal,Karnataka,2,1,7
+583282,Koppal,Karnataka,2,1,7
+585309,Yadgir,Karnataka,2,1,9
+585319,Yadgir,Karnataka,2,1,8
+585321,Yadgir,Karnataka,2,1,18
+586113,Bijapur(kar),Karnataka,2,1,20
+586125,Bijapur(kar),Karnataka,2,1,14
+587117,Bagalkot,Karnataka,2,1,8
+600041,Kanchipuram,Tamil Nadu,2,1,4
+600056,Tiruvallur,Tamil Nadu,2,1,5
+600058,Tiruvallur,Tamil Nadu,2,1,3
+600107,Chennai,Tamil Nadu,2,1,2
+600128,Tiruvallur,Tamil Nadu,2,1,2
+601102,Tiruvallur,Tamil Nadu,2,1,8
+602105,Kanchipuram,Tamil Nadu,2,1,12
+604407,Tiruvannamalai,Tamil Nadu,2,1,16
+604505,Tiruvannamalai,Tamil Nadu,2,1,7
+605007,Pondicherry,Puducherry,2,2,9
+605014,Pondicherry,Puducherry,2,2,4
+605101,Villupuram,Tamil Nadu,2,2,3
+605102,Villupuram,Tamil Nadu,2,2,6
+605105,Villupuram,Tamil Nadu,2,2,8
+605107,Villupuram,Tamil Nadu,2,2,8
+605110,Pondicherry,Puducherry,2,2,7
+605111,Villupuram,Tamil Nadu,2,2,6
+605501,Villupuram,Tamil Nadu,2,2,14
+605502,Pondicherry,Puducherry,2,2,6
+605702,Villupuram,Tamil Nadu,2,1,9
+606104,Cuddalore,Tamil Nadu,2,1,12
+607101,Cuddalore,Tamil Nadu,2,1,11
+607201,Villupuram,Tamil Nadu,2,1,7
+607402,Pondicherry,Puducherry,2,2,6
+607805,Cuddalore,Tamil Nadu,2,1,9
+608703,Cuddalore,Tamil Nadu,2,1,13
+609403,Tiruvarur,Tamil Nadu,2,1,8
+609501,Tiruvarur,Tamil Nadu,2,1,8
+609503,Tiruvarur,Tamil Nadu,2,1,8
+609504,Tiruvarur,Tamil Nadu,2,1,3
+609603,Karaikal,Puducherry,2,2,6
+609604,Karaikal,Puducherry,2,2,3
+609802,Thanjavur,Tamil Nadu,2,1,4
+609804,Thanjavur,Tamil Nadu,2,1,4
+609807,Thanjavur,Tamil Nadu,2,1,6
+610101,Tiruvarur,Tamil Nadu,2,1,14
+610106,Tiruvarur,Tamil Nadu,2,1,5
+610201,Tiruvarur,Tamil Nadu,2,1,4
+610203,Tiruvarur,Tamil Nadu,2,1,7
+611101,Tiruvarur,Tamil Nadu,2,1,5
+612102,Thanjavur,Tamil Nadu,2,1,4
+612603,Tiruvarur,Tamil Nadu,2,1,5
+612605,Thanjavur,Tamil Nadu,2,1,6
+612802,Tiruvarur,Tamil Nadu,2,1,7
+612804,Tiruvarur,Tamil Nadu,2,1,10
+613702,Tiruvarur,Tamil Nadu,2,1,2
+614015,Tiruvarur,Tamil Nadu,2,1,4
+614017,Tiruvarur,Tamil Nadu,2,1,6
+614019,Thanjavur,Tamil Nadu,2,1,14
+614208,Thanjavur,Tamil Nadu,2,1,3
+614302,Thanjavur,Tamil Nadu,2,1,6
+614704,Tiruvarur,Tamil Nadu,2,1,11
+614711,Nagapattinam,Tamil Nadu,2,1,10
+614716,Tiruvarur,Tamil Nadu,2,1,5
+614902,Thanjavur,Tamil Nadu,2,1,14
+614903,Thanjavur,Tamil Nadu,2,1,12
+621101,Perambalur,Tamil Nadu,2,1,5
+621104,Perambalur,Tamil Nadu,2,1,10
+621215,Tiruchirappalli,Tamil Nadu,2,1,11
+621218,Tiruchirappalli,Tamil Nadu,2,1,7
+621305,Tiruchirappalli,Tamil Nadu,2,1,10
+621306,Tiruchirappalli,Tamil Nadu,2,1,10
+621311,Karur,Tamil Nadu,2,1,11
+621312,Tiruchirappalli,Tamil Nadu,2,1,7
+621315,Tiruchirappalli,Tamil Nadu,2,1,11
+621651,Tiruchirappalli,Tamil Nadu,2,1,10
+621653,Tiruchirappalli,Tamil Nadu,2,1,6
+621713,Ariyalur,Tamil Nadu,2,1,13
+621715,Ariyalur,Tamil Nadu,2,1,11
+623401,Ramanathapuram,Tamil Nadu,2,1,6
+623402,Ramanathapuram,Tamil Nadu,2,1,6
+623701,Ramanathapuram,Tamil Nadu,2,1,11
+624622,Dindigul,Tamil Nadu,2,1,10
+625527,Madurai,Tamil Nadu,2,1,11
+625705,Madurai,Tamil Nadu,2,1,10
+626202,Virudhunagar,Tamil Nadu,2,1,7
+626205,Virudhunagar,Tamil Nadu,2,1,6
+627758,Tirunelveli,Tamil Nadu,2,1,5
+627855,Tirunelveli,Tamil Nadu,2,1,5
+628502,Tuticorin,Tamil Nadu,2,1,14
+628552,Tuticorin,Tamil Nadu,2,1,11
+630312,Sivaganga,Tamil Nadu,2,1,5
+631202,Tiruvallur,Tamil Nadu,2,1,8
+631402,Kanchipuram,Tamil Nadu,2,1,6
+632311,Tiruvannamalai,Tamil Nadu,2,1,6
+632312,Vellore,Tamil Nadu,2,1,4
+632319,Vellore,Tamil Nadu,2,1,4
+632507,Vellore,Tamil Nadu,2,1,7
+632511,Tiruvannamalai,Tamil Nadu,2,1,10
+632512,Vellore,Tamil Nadu,2,1,10
+635111,Krishnagiri,Tamil Nadu,2,1,7
+635703,Tiruvannamalai,Tamil Nadu,2,1,16
+636001,Salem,Tamil Nadu,2,1,12
+636113,Salem,Tamil Nadu,2,1,8
+636118,Namakkal,Tamil Nadu,2,1,2
+636142,Namakkal,Tamil Nadu,2,1,3
+636202,Namakkal,Tamil Nadu,2,1,13
+636906,Dharmapuri,Tamil Nadu,2,1,17
+637101,Namakkal,Tamil Nadu,2,1,11
+637102,Namakkal,Tamil Nadu,2,1,13
+637103,Salem,Tamil Nadu,2,1,8
+637104,Namakkal,Tamil Nadu,2,1,4
+637105,Namakkal,Tamil Nadu,2,1,6
+637107,Namakkal,Tamil Nadu,2,1,4
+637301,Salem,Tamil Nadu,2,1,7
+637302,Namakkal,Tamil Nadu,2,1,6
+637303,Salem,Tamil Nadu,2,1,8
+637304,Namakkal,Tamil Nadu,2,1,6
+637407,Namakkal,Tamil Nadu,2,1,6
+637410,Namakkal,Tamil Nadu,2,1,8
+638007,Namakkal,Tamil Nadu,2,1,3
+638103,Erode,Tamil Nadu,2,1,10
+638151,Erode,Tamil Nadu,2,1,11
+638402,Erode,Tamil Nadu,2,1,10
+638458,Erode,Tamil Nadu,2,1,7
+638462,Erode,Tamil Nadu,2,1,7
+639201,Karur,Tamil Nadu,2,1,11
+639202,Karur,Tamil Nadu,2,1,11
+639203,Karur,Tamil Nadu,2,1,5
+641605,Erode,Tamil Nadu,2,1,4
+641607,Coimbatore,Tamil Nadu,2,1,4
+642113,Coimbatore,Tamil Nadu,2,1,4
+642206,Coimbatore,Tamil Nadu,2,1,5
+670511,Kannur,Kerala,2,1,15
+673632,Malappuram,Kerala,2,1,3
+673633,Malappuram,Kerala,2,1,5
+680667,Thrissur,Kerala,2,1,3
+685533,Idukki,Kerala,2,1,15
+686102,Kottayam,Kerala,2,1,5
+686103,Kottayam,Kerala,2,1,3
+686510,Kottayam,Kerala,2,1,8
+686513,Kottayam,Kerala,2,1,8
+686514,Kottayam,Kerala,2,1,9
+689122,Alappuzha,Kerala,2,1,3
+689123,Alappuzha,Kerala,2,1,3
+689695,Kollam,Kerala,2,1,9
+690504,Alappuzha,Kerala,2,1,5
+690522,Kollam,Kerala,2,1,4
+690547,Kollam,Kerala,2,1,4
+691526,Pathanamthitta,Kerala,2,1,4
+691552,Pathanamthitta,Kerala,2,1,3
+691553,Kollam,Kerala,2,1,3
+700089,Kolkata,West Bengal,2,1,2
+700105,South 24 Parganas,West Bengal,2,1,3
+700135,North 24 Parganas,West Bengal,2,1,24
+712408,Hooghly,West Bengal,2,1,6
+712410,Hooghly,West Bengal,2,1,25
+713123,Bardhaman,West Bengal,2,1,12
+713150,Bankura,West Bengal,2,1,9
+713512,Bardhaman,West Bengal,2,1,12
+713514,Bankura,West Bengal,2,1,7
+713519,Bankura,West Bengal,2,1,10
+721101,West Midnapore,West Bengal,2,1,10
+721130,East Midnapore,West Bengal,2,1,5
+721131,West Midnapore,West Bengal,2,1,8
+721135,West Midnapore,West Bengal,2,1,12
+721153,West Midnapore,West Bengal,2,1,5
+721253,West Midnapore,West Bengal,2,1,16
+721425,West Midnapore,West Bengal,2,1,8
+721435,West Midnapore,West Bengal,2,1,6
+721437,West Midnapore,West Bengal,2,1,21
+721443,West Midnapore,West Bengal,2,1,10
+721627,East Midnapore,West Bengal,2,1,6
+721641,West Midnapore,West Bengal,2,1,9
+733121,South Dinajpur,West Bengal,2,1,16
+733124,South Dinajpur,West Bengal,2,1,20
+733125,South Dinajpur,West Bengal,2,1,13
+733128,North Dinajpur,West Bengal,2,1,15
+733132,South Dinajpur,West Bengal,2,1,18
+733142,South Dinajpur,West Bengal,2,1,9
+734001,Darjiling,West Bengal,2,1,10
+734004,Darjiling,West Bengal,2,1,3
+734007,Jalpaiguri,West Bengal,2,1,3
+735122,Cooch Behar,West Bengal,2,1,18
+735206,Jalpaiguri,West Bengal,2,1,5
+735211,Jalpaiguri,West Bengal,2,1,20
+735217,Jalpaiguri,West Bengal,2,1,7
+735224,Jalpaiguri,West Bengal,2,1,20
+735303,Cooch Behar,West Bengal,2,1,16
+736204,Jalpaiguri,West Bengal,2,1,13
+736206,Jalpaiguri,West Bengal,2,1,15
+737102,East Sikkim,Sikkim,2,1,11
+737113,West Sikkim,Sikkim,2,1,15
+737121,West Sikkim,Sikkim,2,1,23
+743329,South 24 Parganas,West Bengal,2,1,34
+743611,South 24 Parganas,West Bengal,2,1,12
+752030,Khorda,Odisha,2,1,15
+752120,Puri,Odisha,2,1,3
+754001,Cuttack,Odisha,2,1,9
+754004,Cuttack,Odisha,2,1,13
+754005,Cuttack,Odisha,2,1,8
+754023,Jajapur,Odisha,2,1,7
+754113,Jagatsinghapur,Odisha,2,1,11
+754130,Jagatsinghapur,Odisha,2,1,8
+754141,Jagatsinghapur,Odisha,2,1,20
+754162,Jagatsinghapur,Odisha,2,1,8
+754203,Kendrapara,Odisha,2,1,3
+754205,Jajapur,Odisha,2,1,8
+754214,Kendrapara,Odisha,2,1,15
+755019,Jajapur,Odisha,2,1,22
+756115,Bhadrak,Odisha,2,1,9
+756121,Bhadrak,Odisha,2,1,12
+756133,Bhadrak,Odisha,2,1,13
+758025,Kendujhar,Odisha,2,1,17
+759128,Angul,Odisha,2,1,13
+759146,Dhenkanal,Odisha,2,1,6
+761014,Ganjam,Odisha,2,1,6
+761017,Gajapati,Odisha,2,1,12
+761018,Ganjam,Odisha,2,1,12
+762012,Kandhamal,Odisha,2,1,16
+762018,Boudh,Odisha,2,1,8
+762020,Boudh,Odisha,2,1,11
+764041,Koraput,Odisha,2,1,5
+764043,Koraput,Odisha,2,1,24
+764044,Malkangiri,Odisha,2,1,23
+764055,Koraput,Odisha,2,1,7
+764059,Nabarangapur,Odisha,2,1,13
+765013,Koraput,Odisha,2,1,15
+765017,Rayagada,Odisha,2,1,21
+766107,Nuapada,Odisha,2,1,14
+766118,Nuapada,Odisha,2,1,14
+767016,Sonapur,Odisha,2,1,20
+767020,Balangir,Odisha,2,1,17
+767023,Sonapur,Odisha,2,1,13
+767068,Sonapur,Odisha,2,1,5
+768045,Bargarh,Odisha,2,1,7
+768104,Bargarh,Odisha,2,1,12
+768107,Sambalpur,Odisha,2,1,19
+768228,Sambalpur,Odisha,2,1,19
+781305,Barpeta,Assam,2,1,7
+781309,Barpeta,Assam,2,1,10
+781317,Barpeta,Assam,2,1,12
+781329,Barpeta,Assam,2,1,8
+781367,Nalbari,Assam,2,1,18
+782001,Nagaon,Assam,2,1,3
+782103,Nagaon,Assam,2,1,24
+782121,Marigaon,Assam,2,1,11
+782139,Karbi Anglong,Assam,2,1,4
+782425,Nagaon,Assam,2,1,11
+782435,Nagaon,Assam,2,1,14
+782442,Nagaon,Assam,2,1,7
+782446,Nagaon,Assam,2,1,23
+782447,Karbi Anglong,Assam,2,1,9
+782460,Karbi Anglong,Assam,2,1,4
+782481,Karbi Anglong,Assam,2,1,15
+783123,Goalpara,Assam,2,2,11
+783127,Dhubri,Assam,2,1,7
+783337,Kokrajhar,Assam,2,1,12
+783345,Kokrajhar,Assam,2,1,8
+783360,Kokrajhar,Assam,2,1,20
+783383,Bongaigaon,Assam,2,1,7
+783388,Bongaigaon,Assam,2,1,5
+785006,Jorhat,Assam,2,1,7
+785104,Jorhat,Assam,2,1,19
+785107,Jorhat,Assam,2,1,9
+785601,Golaghat,Assam,2,1,10
+785614,Golaghat,Assam,2,1,17
+785616,Jorhat,Assam,2,1,9
+785633,Jorhat,Assam,2,1,6
+785666,Sibsagar,Assam,2,1,8
+785671,Sibsagar,Assam,2,1,9
+785691,Sibsagar,Assam,2,1,13
+785703,Golaghat,Assam,2,1,9
+785705,Sibsagar,Assam,2,1,8
+786183,Tinsukia,Assam,2,1,9
+786189,Tinsukia,Assam,2,1,3
+787034,Dhemaji,Assam,2,1,7
+787035,Dhemaji,Assam,2,1,3
+787053,Lakhimpur,Assam,2,1,13
+788006,Cachar,Assam,2,1,5
+788108,Cachar,Assam,2,1,4
+788113,Cachar,Assam,2,1,9
+788120,Cachar,Assam,2,1,9
+790001,West Kameng,Arunachal Pradesh,2,1,4
+790102,East Kameng,Arunachal Pradesh,2,1,11
+791001,West Siang,Arunachal Pradesh,2,1,18
+791102,East Siang,Arunachal Pradesh,2,1,22
+791113,Papum Pare,Arunachal Pradesh,2,1,5
+791119,Lower Subansiri,Arunachal Pradesh,2,1,3
+792103,Lohit,Arunachal Pradesh,2,1,12
+792104,Papum Pare,Arunachal Pradesh,2,1,9
+792110,Lower Dibang Valley,Arunachal Pradesh,2,1,19
+793104,Ri Bhoi,Meghalaya,2,1,2
+793109,Jaintia Hills,Meghalaya,2,1,19
+793121,East Khasi Hills,Meghalaya,2,1,16
+794002,West Garo Hills,Meghalaya,2,1,15
+794107,East Garo Hills,Meghalaya,2,1,2
+794108,East Garo Hills,Meghalaya,2,1,6
+795003,Imphal West,Manipur,2,1,7
+795101,Thoubal,Manipur,2,1,12
+795116,Imphal West,Manipur,2,1,16
+795125,Tamenglong,Manipur,2,1,16
+795132,Imphal West,Manipur,2,1,23
+795135,Thoubal,Manipur,2,1,28
+795136,Imphal West,Manipur,2,1,7
+795140,Imphal West,Manipur,2,1,4
+796070,Aizawl,Mizoram,2,1,11
+796101,Kolasib,Mizoram,2,1,6
+796370,Serchhip,Mizoram,2,1,7
+796410,Mammit,Mizoram,2,1,6
+796421,Mammit,Mizoram,2,1,2
+796471,Aizawl,Mizoram,2,1,7
+796770,Lunglei,Mizoram,2,1,9
+796901,Saiha,Mizoram,2,1,30
+797101,Peren,Nagaland,2,1,5
+797109,Kohima,Nagaland,2,1,16
+799015,West Tripura,Tripura,2,1,2
+799045,West Tripura,Tripura,2,1,13
+799103,West Tripura,Tripura,2,1,15
+799105,South Tripura,Tripura,2,1,20
+799115,West Tripura,Tripura,2,1,16
+799153,West Tripura,Tripura,2,1,2
+799266,North Tripura,Tripura,2,1,5
+799273,Dhalai,Tripura,2,1,7
+801304,Nalanda,Bihar,2,1,12
+801305,Nalanda,Bihar,2,1,13
+802213,Rohtas,Bihar,2,1,14
+802218,Rohtas,Bihar,2,1,15
+802313,Bhojpur,Bihar,2,1,4
+803109,Nawada,Bihar,2,1,8
+803110,Nalanda,Bihar,2,1,34
+803213,Patna,Bihar,2,1,18
+804401,Arwal,Bihar,2,1,9
+804402,Gaya,Bihar,2,1,9
+804406,Jehanabad,Bihar,2,1,4
+804421,Gaya,Bihar,2,1,14
+804423,Gaya,Bihar,2,1,8
+804424,Jehanabad,Bihar,2,1,11
+804427,Jehanabad,Bihar,2,1,9
+804428,Gaya,Bihar,2,1,16
+805109,Nawada,Bihar,2,1,10
+805128,Gaya,Bihar,2,1,12
+805129,Nawada,Bihar,2,1,7
+805130,Nawada,Bihar,2,1,21
+811101,Sheikhpura,Bihar,2,1,27
+811102,Sheikhpura,Bihar,2,1,7
+811103,Sheikhpura,Bihar,2,1,8
+811104,Nalanda,Bihar,2,1,9
+811106,Lakhisarai,Bihar,2,1,13
+811107,Lakhisarai,Bihar,2,1,13
+811202,Munger,Bihar,2,1,17
+811211,Munger,Bihar,2,1,17
+811302,Lakhisarai,Bihar,2,1,13
+811304,Sheikhpura,Bihar,2,1,13
+811308,Jamui,Bihar,2,1,17
+813101,Banka,Bihar,2,1,23
+813103,Banka,Bihar,2,1,15
+813105,Bhagalpur,Bihar,2,1,20
+813108,Bhagalpur,Bihar,2,1,16
+813110,Banka,Bihar,2,1,8
+813201,Munger,Bihar,2,1,13
+813204,Bhagalpur,Bihar,2,1,20
+813205,Bhagalpur,Bihar,2,1,19
+813207,Banka,Bihar,2,1,14
+813208,Godda,Jharkhand,2,1,14
+813211,Banka,Bihar,2,1,15
+814102,Dumka,Jharkhand,2,1,18
+814120,Dumka,Jharkhand,2,1,15
+814133,Godda,Jharkhand,2,1,36
+814146,Dumka,Jharkhand,2,1,30
+814150,Deoghar,Jharkhand,2,1,13
+814151,Dumka,Jharkhand,2,1,15
+814153,Godda,Jharkhand,2,1,24
+814155,Godda,Jharkhand,2,1,17
+814166,Jamtara,Jharkhand,2,1,10
+815355,Jamtara,Jharkhand,2,1,13
+816103,Dumka,Jharkhand,2,1,11
+816105,Sahibganj,Jharkhand,2,1,7
+816107,Pakur,Jharkhand,2,1,21
+816117,Pakur,Jharkhand,2,1,15
+821104,Rohtas,Bihar,2,1,11
+821108,Kaimur (bhabua),Bihar,2,1,23
+822112,Garhwa,Jharkhand,2,1,17
+822118,Palamau,Jharkhand,2,1,20
+822128,Garhwa,Jharkhand,2,1,13
+822132,Garhwa,Jharkhand,2,1,9
+824113,Aurangabad(bh),Bihar,2,1,9
+824115,Aurangabad(bh),Bihar,2,1,6
+824116,Gaya,Bihar,2,1,6
+824118,Gaya,Bihar,2,1,19
+824127,Aurangabad(bh),Bihar,2,1,7
+824207,Gaya,Bihar,2,1,17
+824219,Gaya,Bihar,2,1,7
+824232,Gaya,Bihar,2,1,29
+824235,Gaya,Bihar,2,1,19
+825315,Bokaro,Jharkhand,2,1,4
+825322,Giridh,Jharkhand,2,1,16
+825323,Koderma,Jharkhand,2,1,12
+825401,Chatra,Jharkhand,2,1,23
+825418,Koderma,Jharkhand,2,1,11
+827302,Bokaro,Jharkhand,2,1,11
+828125,Dhanbad,Jharkhand,2,1,4
+828302,Bokaro,Jharkhand,2,1,2
+828303,Dhanbad,Jharkhand,2,1,3
+828307,Dhanbad,Jharkhand,2,1,3
+829101,Ramgarh,Jharkhand,2,1,5
+829119,Ramgarh,Jharkhand,2,1,5
+829201,Chatra,Jharkhand,2,1,2
+829202,Latehar,Jharkhand,2,1,18
+831002,East Singhbhum,Jharkhand,2,1,26
+831012,East Singhbhum,Jharkhand,2,1,6
+832107,East Singhbhum,Jharkhand,2,1,5
+832112,East Singhbhum,Jharkhand,2,1,11
+833101,Seraikela-kharsawan,Jharkhand,2,1,4
+833102,West Singhbhum,Jharkhand,2,1,25
+833105,West Singhbhum,Jharkhand,2,1,6
+833202,West Singhbhum,Jharkhand,2,1,3
+833204,West Singhbhum,Jharkhand,2,1,32
+834004,Ranchi,Jharkhand,2,1,12
+834009,Ranchi,Jharkhand,2,1,4
+835211,Simdega,Jharkhand,2,1,17
+835212,Simdega,Jharkhand,2,1,11
+835214,Ranchi,Jharkhand,2,1,26
+835216,Ranchi,Jharkhand,2,1,18
+835227,Ranchi,Jharkhand,2,1,27
+835235,Simdega,Jharkhand,2,1,8
+835325,Ranchi,Jharkhand,2,1,12
+841223,Saran,Bihar,2,1,3
+841312,Saran,Bihar,2,1,4
+841417,Saran,Bihar,2,1,14
+841422,Saran,Bihar,2,1,8
+843102,Muzaffarpur,Bihar,2,1,9
+843313,Sitamarhi,Bihar,2,1,12
+843316,Sitamarhi,Bihar,2,1,15
+843317,Sitamarhi,Bihar,2,1,12
+843325,Sitamarhi,Bihar,2,1,10
+843334,Sitamarhi,Bihar,2,1,16
+844111,Vaishali,Bihar,2,1,11
+844112,Vaishali,Bihar,2,1,11
+844118,Vaishali,Bihar,2,1,10
+844120,Muzaffarpur,Bihar,2,1,10
+844501,Vaishali,Bihar,2,1,7
+844506,Vaishali,Bihar,2,1,14
+847102,Madhubani,Bihar,2,1,10
+847105,Darbhanga,Bihar,2,1,16
+847107,Muzaffarpur,Bihar,2,1,14
+847122,Darbhanga,Bihar,2,1,5
+847239,Madhubani,Bihar,2,1,12
+847301,Darbhanga,Bihar,2,1,18
+847302,Darbhanga,Bihar,2,1,7
+847303,Darbhanga,Bihar,2,1,7
+847408,Madhubani,Bihar,2,1,28
+847424,Madhubani,Bihar,2,1,6
+847452,Supaul,Bihar,2,1,18
+848205,Samastipur,Bihar,2,1,9
+848207,Samastipur,Bihar,2,1,15
+848209,Samastipur,Bihar,2,1,25
+848213,Darbhanga,Bihar,2,1,14
+848506,Samastipur,Bihar,2,1,9
+851215,Khagaria,Bihar,2,1,6
+852108,Supaul,Bihar,2,1,10
+852116,Madhepura,Bihar,2,1,8
+852121,Madhepura,Bihar,2,1,8
+852123,Saharsa,Bihar,2,1,15
+852124,Saharsa,Bihar,2,1,20
+852127,Saharsa,Bihar,2,1,16
+852202,Saharsa,Bihar,2,1,23
+852216,Saharsa,Bihar,2,1,15
+852218,Supaul,Bihar,2,1,13
+853203,Bhagalpur,Bihar,2,1,11
+854102,Purnia,Bihar,2,1,14
+854113,Katihar,Bihar,2,1,19
+854316,Purnia,Bihar,2,1,5
+854317,Katihar,Bihar,2,1,24
+854325,Purnia,Bihar,2,1,13
+854333,Araria,Bihar,2,1,16
