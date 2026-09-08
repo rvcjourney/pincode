@@ -13,10 +13,11 @@ work: the published artifact runs in a sandbox that blocks them.
 
 READ-ONLY. Every statement here is a SELECT; nothing mutates the master.
 """
-import csv, io, os, sys
+import csv, hmac, io, itertools, os, subprocess, sys, threading, time
+from datetime import datetime, timezone
 
 try:
-    from fastapi import FastAPI, HTTPException, Query
+    from fastapi import FastAPI, Header, HTTPException, Query
     from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
 except ImportError:
     sys.exit("[!] pip install fastapi uvicorn")
@@ -26,6 +27,26 @@ import ckdb
 HERE = os.path.dirname(os.path.abspath(__file__))
 UI = os.path.join(HERE, "web", "ui.html")
 MAX_PAGE = 500
+
+# Pipeline tasks runnable from the UI. An allowlist, never a free-form command:
+# the value is the exact argv, so nothing a caller sends can reach a shell.
+#   "writes" marks a task that mutates the master - the UI confirms those.
+TASKS = {
+    "verify":      {"argv": ["tools/verify.py"], "writes": False,
+                    "label": "Verify integrity"},
+    "export":      {"argv": ["export.py"], "writes": False,
+                    "label": "Rebuild exports + QA summary"},
+    "build":       {"argv": ["build_db.py"], "writes": True,
+                    "label": "Load / upsert the master"},
+    "localities":  {"argv": ["build_localities.py"], "writes": True,
+                    "label": "Rebuild place-name layer"},
+    "refresh_dry": {"argv": ["refresh.py", "--dry-run"], "writes": False,
+                    "label": "Preview monthly refresh"},
+    "refresh":     {"argv": ["refresh.py"], "writes": True,
+                    "label": "Apply monthly refresh"},
+}
+
+ADMIN_TOKEN = os.environ.get("CK_ADMIN_TOKEN", "").strip()
 
 app = FastAPI(title="CK PIN Code Master", docs_url="/api/docs", redoc_url=None)
 
@@ -337,6 +358,125 @@ def download(name: str):
 @app.get("/api/downloads")
 def download_list():
     return sorted(DOWNLOADS)
+
+
+# ============================================================ pipeline control
+# Running the pipeline from a browser needs three things to be safe:
+#   1. a shared-secret token - without CK_ADMIN_TOKEN set, these endpoints do
+#      not exist at all (404, so they are not even advertised);
+#   2. an allowlist of tasks, so no caller-supplied string reaches a shell;
+#   3. one job at a time, because two concurrent builds would fight over the
+#      same rows.
+# Jobs run as subprocesses of this container - the Docker socket is never
+# mounted, which would be equivalent to handing out root on the host.
+_jobs = {}
+_job_ids = itertools.count(1)
+_job_lock = threading.Lock()
+_running = None
+
+
+def _require_token(token):
+    if not ADMIN_TOKEN:
+        # not configured: behave as though the route does not exist
+        raise HTTPException(404, "Not Found")
+    if not token or not hmac.compare_digest(token, ADMIN_TOKEN):
+        raise HTTPException(401, "invalid or missing X-CK-Token")
+
+
+def _run_job(job_id, name):
+    job = _jobs[job_id]
+    argv = [sys.executable, "-u"] + [os.path.join(HERE, TASKS[name]["argv"][0])] \
+        + TASKS[name]["argv"][1:]
+    job["started"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    try:
+        p = subprocess.Popen(argv, cwd=HERE, stdout=subprocess.PIPE,
+                             stderr=subprocess.STDOUT, text=True, bufsize=1)
+        job["pid"] = p.pid
+        for line in p.stdout:
+            job["log"].append(line.rstrip("\n"))
+            del job["log"][:-400]          # keep the tail bounded
+        job["exit_code"] = p.wait()
+        job["status"] = "ok" if job["exit_code"] == 0 else "failed"
+    except Exception as e:                  # noqa: BLE001 - surfaced to the UI
+        job["status"] = "failed"
+        job["exit_code"] = -1
+        job["log"].append(f"[!] {type(e).__name__}: {e}")
+    finally:
+        job["finished"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+        global _running
+        with _job_lock:
+            _running = None
+
+
+@app.get("/api/admin/tasks")
+def admin_tasks(x_ck_token: str = Header(default="")):
+    _require_token(x_ck_token)
+    return {"tasks": [{"name": k, "label": v["label"], "writes": v["writes"]}
+                      for k, v in TASKS.items()],
+            "running": _running}
+
+
+@app.post("/api/admin/run/{name}")
+def admin_run(name: str, confirm: bool = False, x_ck_token: str = Header(default="")):
+    _require_token(x_ck_token)
+    if name not in TASKS:
+        raise HTTPException(404, f"unknown task '{name}'")
+    if TASKS[name]["writes"] and not confirm:
+        raise HTTPException(400, f"'{name}' modifies the master; pass confirm=true")
+
+    global _running
+    with _job_lock:
+        if _running is not None:
+            raise HTTPException(409, f"job {_running} is still running")
+        job_id = next(_job_ids)
+        _running = job_id
+        _jobs[job_id] = {"id": job_id, "task": name, "status": "running",
+                         "log": [], "exit_code": None, "started": None,
+                         "finished": None,
+                         "queued": datetime.now(timezone.utc).isoformat(timespec="seconds")}
+    threading.Thread(target=_run_job, args=(job_id, name), daemon=True).start()
+    return {"job": job_id, "task": name, "status": "running"}
+
+
+@app.get("/api/admin/job/{job_id}")
+def admin_job(job_id: int, x_ck_token: str = Header(default="")):
+    _require_token(x_ck_token)
+    if job_id not in _jobs:
+        raise HTTPException(404, f"no job {job_id}")
+    j = dict(_jobs[job_id])
+    j["log"] = j["log"][-200:]
+    return j
+
+
+@app.get("/api/admin/jobs")
+def admin_jobs(x_ck_token: str = Header(default="")):
+    _require_token(x_ck_token)
+    return {"running": _running,
+            "jobs": [{k: v for k, v in j.items() if k != "log"}
+                     for j in sorted(_jobs.values(), key=lambda x: -x["id"])[:20]]}
+
+
+@app.get("/api/pipeline/status")
+def pipeline_status():
+    """Read-only, no token: when was the data last touched, and by what."""
+    d = db()
+    try:
+        return {
+            "admin_enabled": bool(ADMIN_TOKEN),
+            "running_job": _running,
+            "snapshots": d.rows(
+                """SELECT source_id, MAX(fetched_at) AS last_fetched,
+                          COUNT(*) AS n, MAX(row_count) AS last_rows
+                   FROM snapshot GROUP BY source_id ORDER BY MAX(fetched_at) DESC"""),
+            "last_change": d.q("SELECT MAX(detected_at) FROM change_log"),
+            "changes": d.q("SELECT COUNT(*) FROM change_log"),
+            "recent": d.rows(
+                """SELECT detected_at, entity, entity_key, change_type, field,
+                          old_value, new_value
+                   FROM change_log ORDER BY change_id DESC LIMIT 25"""),
+        }
+    finally:
+        d.close()
 
 
 if __name__ == "__main__":

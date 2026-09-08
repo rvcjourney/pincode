@@ -144,6 +144,7 @@ footer a{color:var(--accent)}
     <button data-tab="offices" type="button">Post offices</button>
     <button data-tab="localities" type="button">Place names</button>
     <button data-tab="downloads" type="button">Downloads</button>
+    <button data-tab="ops" type="button">Operations</button>
   </div>
 
   <div class="bar" id="bar"></div>
@@ -225,7 +226,9 @@ function qs(){
 
 function buildBar(){
   var t = TABS[S.tab], h = "";
-  if (S.tab === "downloads"){ $("bar").innerHTML = ""; return; }
+  var paged = !!t;
+  $("prev").hidden = !paged; $("next").hidden = !paged;
+  if (!t){ $("bar").innerHTML = ""; return; }   // downloads / ops have no filters
   h += '<input type="search" id="q" placeholder="' + t.ph + '" value="' + esc(S.q) + '">';
   if (t.filters.indexOf("state") >= 0){
     h += '<select id="state"><option value="">All states</option>' +
@@ -302,7 +305,115 @@ function cell(r, col){
   return v === null || v === undefined || v === "" ? '<span class="dim">—</span>' : esc(v);
 }
 
+// ------------------------------------------------------------- operations
+var TOKEN = "";
+try { TOKEN = sessionStorage.getItem("ck_admin_token") || ""; } catch(e){ TOKEN = ""; }
+
+function hdr(){ return TOKEN ? {"X-CK-Token": TOKEN} : {}; }
+
+function renderOps(){
+  $("hrow").innerHTML = ""; $("tbody").innerHTML = ""; $("empty").hidden = true;
+  $("count").innerHTML = "<b>Pipeline</b> &middot; status and controls";
+  fetch("/api/pipeline/status").then(function(r){ return r.json(); }).then(function(st){
+    var snaps = (st.snapshots || []).map(function(s){
+      return '<div class="kv"><dt>' + esc(s.source_id) + "</dt><dd class=\"n\">" +
+             esc((s.last_fetched || "").replace("T", " ").replace("+00:00", " UTC")) +
+             "</dd></div>";
+    }).join("") || '<div class="dim">no snapshots yet</div>';
+
+    var recent = (st.recent || []).slice(0, 12).map(function(c){
+      return '<div class="orow"><span>' + esc(c.entity_key) +
+        ' <span class="pill ' + (c.change_type === "removed" ? "bad" :
+           c.change_type === "added" ? "good" : "mute") + '">' + esc(c.change_type) +
+        "</span></span><span class=\"dim\">" + esc(c.field || "") + "</span></div>";
+    }).join("") || '<div class="dim">no changes recorded yet</div>';
+
+    var ctrl;
+    if (!st.admin_enabled){
+      ctrl = '<div class="spanbox"><p><b>Controls are disabled.</b> ' +
+        'Set <code>CK_ADMIN_TOKEN</code> in <code>.env</code> and restart the ' +
+        'web service to run the pipeline from here. Without it these endpoints ' +
+        'do not exist at all.</p></div>';
+    } else {
+      ctrl = '<div class="bar" style="margin:0 0 10px">' +
+        '<input type="search" id="tok" placeholder="admin token" value="' + esc(TOKEN) + '">' +
+        '<button id="savetok" type="button">Use token</button></div>' +
+        '<div class="dl" id="taskbtns"><span class="dim">enter the token to load tasks</span></div>' +
+        '<pre id="joblog" style="margin:12px 0 0;max-height:260px;overflow:auto;' +
+        'background:var(--ground);border:1px solid var(--line);border-radius:8px;' +
+        'padding:10px;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap"></pre>';
+    }
+
+    $("detail").innerHTML =
+      '<div class="dhd"><strong>Pipeline</strong>' +
+      (st.running_job ? ' <span class="pill warn">job ' + st.running_job + ' running</span>' : "") +
+      "</div><div class=\"dbody\">" +
+      '<div class="dsec"><h3>Last loaded</h3><dl style="margin:0">' + snaps +
+        '<div class="kv"><dt>change_log rows</dt><dd class="n">' + num(st.changes) + "</dd></div>" +
+        "</dl></div>" +
+      '<div class="dsec"><h3>Recent changes</h3><div class="olist">' + recent + "</div></div>" +
+      '<div class="dsec" style="grid-column:1/-1"><h3>Run a task</h3>' + ctrl + "</div>" +
+      "</div>";
+
+    if (st.admin_enabled){
+      $("savetok").addEventListener("click", function(){
+        TOKEN = $("tok").value.trim();
+        try { sessionStorage.setItem("ck_admin_token", TOKEN); } catch(e){}
+        loadTasks();
+      });
+      if (TOKEN) loadTasks();
+    }
+  });
+}
+
+function loadTasks(){
+  fetch("/api/admin/tasks", {headers: hdr()}).then(function(r){
+    if (r.status === 401) throw new Error("token rejected");
+    if (!r.ok) throw new Error("HTTP " + r.status);
+    return r.json();
+  }).then(function(d){
+    $("taskbtns").innerHTML = d.tasks.map(function(t){
+      return '<button type="button" data-task="' + t.name + '" data-writes="' +
+        (t.writes ? "1" : "") + '">' + esc(t.label) +
+        (t.writes ? ' <span class="pill warn">writes</span>' : "") + "</button>";
+    }).join("");
+    $("taskbtns").querySelectorAll("button[data-task]").forEach(function(b){
+      b.addEventListener("click", function(){ runTask(b.getAttribute("data-task"),
+                                                      !!b.getAttribute("data-writes")); });
+    });
+  }).catch(function(e){
+    $("taskbtns").innerHTML = '<span class="pill bad">' + esc(e.message) + "</span>";
+  });
+}
+
+function runTask(name, writes){
+  if (writes && !confirm("'" + name + "' modifies the master database.\n\nContinue?")) return;
+  var log = $("joblog");
+  log.textContent = "starting " + name + "…\n";
+  fetch("/api/admin/run/" + name + (writes ? "?confirm=true" : ""),
+        {method: "POST", headers: hdr()})
+    .then(function(r){ return r.json().then(function(j){
+      if (!r.ok) throw new Error(j.detail || ("HTTP " + r.status));
+      return j; }); })
+    .then(function(j){ poll(j.job); })
+    .catch(function(e){ log.textContent += "[!] " + e.message + "\n"; });
+}
+
+function poll(id){
+  var log = $("joblog");
+  fetch("/api/admin/job/" + id, {headers: hdr()})
+    .then(function(r){ return r.json(); })
+    .then(function(j){
+      log.textContent = j.log.join("\n");
+      log.scrollTop = log.scrollHeight;
+      if (j.status === "running") setTimeout(function(){ poll(id); }, 1200);
+      else log.textContent += "\n\n== " + j.status + " (exit " + j.exit_code + ") ==";
+    })
+    .catch(function(e){ log.textContent += "\n[!] " + e.message; });
+}
+
 function load(){
+  if (S.tab === "ops") return renderOps();
   if (S.tab === "downloads") return renderDownloads();
   var t = TABS[S.tab];
   $("hrow").innerHTML = t.cols.map(function(c){ return "<th>" + c[0] + "</th>"; }).join("");

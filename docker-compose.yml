@@ -88,13 +88,23 @@ services:
       PGUSER: ${POSTGRES_USER:-ck}
       PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
       PGDATABASE: ${POSTGRES_DB:-ck_pincode}
+      # Unset (the default) => /api/admin/* does not exist at all, and the UI's
+      # Operations tab shows status only. Set it to enable running the pipeline
+      # from the browser; anyone holding the token can then modify the master,
+      # so treat it like a password and never expose this service without TLS.
+      CK_ADMIN_TOKEN: ${CK_ADMIN_TOKEN:-}
     # Default binds to localhost only - put a reverse proxy with TLS in front
     # before exposing this. Set CK_WEB_BIND=0.0.0.0 in .env to open it up
-    # directly, but only behind a firewall: there is no auth on this service.
+    # directly, but only behind a firewall: there is no auth on the read paths.
     ports:
       - "${CK_WEB_BIND:-127.0.0.1}:${CK_WEB_PORT:-8000}:8000"
     volumes:
-      - ./out:/app/out:ro
+      # read-write: the Operations tab runs build/export/refresh, which need to
+      # write out/exports and read raw/. Drop back to ':ro' and unset
+      # CK_ADMIN_TOKEN if you want this service to be strictly read-only.
+      - ./out:/app/out
+      - ./raw:/app/raw
+      - ./reports:/app/reports
     entrypoint: ["/app/entrypoint.sh", "serve"]
     healthcheck:
       test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health',timeout=5).status==200 else 1)\""]

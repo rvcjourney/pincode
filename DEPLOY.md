@@ -163,8 +163,42 @@ the live database — not a snapshot. `/api/docs` is the generated API reference
 | `GET /api/localities` | Place-name search across 151,320 names |
 | `GET /api/download/{name}.csv` | Streamed CSV, generated on request |
 
-**It binds to `127.0.0.1:8000` by default and has no authentication.** Reach it
-over an SSH tunnel:
+### Running the pipeline from the browser
+
+The Operations tab shows pipeline status (last snapshot per source, recent
+`change_log` entries) to anyone who can reach the UI. **Running tasks is off
+unless you set a token:**
+
+```bash
+openssl rand -hex 32                        # generate one
+echo 'CK_ADMIN_TOKEN=<that value>' >> .env
+docker compose up -d web
+```
+
+With it unset, `/api/admin/*` returns **404** — the routes are not registered at
+all, so they are not even advertised. With it set, every call needs
+`X-CK-Token`, and tasks that modify the master (`build`, `localities`,
+`refresh`) additionally require `confirm=true`.
+
+| Guard | Behaviour |
+|---|---|
+| No token configured | `/api/admin/*` → 404 |
+| Missing or wrong token | 401 |
+| Task not in the allowlist | 404 — the task name is never passed to a shell |
+| Write task without `confirm` | 400 |
+| A job already running | 409 — one at a time, so two builds cannot fight |
+
+Jobs run as subprocesses of the `web` container. **The Docker socket is never
+mounted** — doing so would be equivalent to handing out root on the host.
+
+Enabling this makes `web` a writable service: it needs `./out` and `./raw`
+mounted read-write and a database role that can write. If you want the UI
+strictly read-only, leave `CK_ADMIN_TOKEN` empty and drive the pipeline from
+cron and the CLI instead — that is the safer default and costs you nothing but
+an SSH session once a month.
+
+**It binds to `127.0.0.1:8000` by default and the read endpoints have no
+authentication.** Reach it over an SSH tunnel:
 
 ```bash
 ssh -L 8000:localhost:8000 you@your-vps     # then open http://localhost:8000
