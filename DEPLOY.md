@@ -27,30 +27,48 @@ What **does**: `docker compose down -v`, `docker volume rm ck_pgdata`, and
 
 ```bash
 # 1. on the VPS
-git clone <your-repo> /srv/ck-pincode && cd /srv/ck-pincode
+git clone https://github.com/rvcjourney/pincode.git /srv/ck-pincode
+cd /srv/ck-pincode
 cp .env.example .env
 openssl rand -base64 32          # paste into POSTGRES_PASSWORD in .env
-nano .env                        # also set DATA_GOV_KEY
+nano .env                        # also set DATA_GOV_KEY if you have one yet
 
 # 2. start Postgres (creates the ck_pgdata volume on first run)
 docker compose up -d db
 docker compose ps                # wait for "healthy"
 
-# 3. get the source data
-mkdir -p raw out reports
-docker compose run --rm etl fetch 5c2f62fe-5afa-4119-a499-fec9d604d5bd raw/postoffices.jsonl
+# 3. build everything from the committed exports — no API key needed
+mkdir -p raw reports
+docker compose run --rm etl all
+```
 
-#    boundary polygons (optional but recommended — gives centroids + areas)
+That's a working, verified database in one command. `all` runs bootstrap →
+build → localities → export → verify, every step idempotent.
+
+### Then upgrade to the official feed
+
+The committed exports are a bootstrap fixture: no per-office lat/long, and
+missing the offices that the old key collision dropped. Replace them with the
+authoritative pull as soon as you have a free key from
+[data.gov.in](https://data.gov.in/user/register):
+
+```bash
+docker compose run --rm etl fetch 5c2f62fe-5afa-4119-a499-fec9d604d5bd raw/postoffices.jsonl
+docker compose run --rm etl fetch f17a1608-5f10-4610-bb50-a63c80d83974 raw/lgd_villages.jsonl
+docker compose run --rm etl all      # build_db prefers postoffices.jsonl automatically
+```
+
+### Boundary polygons (optional, ~280 MB of downloads)
+
+Gives real PIN-area shapes and centroids instead of office-average points:
+
+```bash
 curl -L -o raw/pincode_area.xlsx \
   "https://raw.githubusercontent.com/er-data-storage/postal-code-data/master/Derived%20Information/pincode_geographical_area.xlsx"
 curl -L -o raw/india-pincode.geojson \
   "https://media.githubusercontent.com/media/er-data-storage/postal-code-data/master/india-pincode.geojson"
 docker compose run --rm etl geo
-
-# 4. build and verify
 docker compose run --rm etl build
-docker compose run --rm etl verify
-docker compose run --rm etl export
 ```
 
 `build` creates the schema if absent and upserts. It is safe to re-run at any
@@ -61,10 +79,12 @@ time, including on every deploy.
 ## Routine operations
 
 ```bash
+docker compose run --rm etl all        # bootstrap + build + localities + export + verify
 docker compose run --rm etl build      # re-load / upsert. Safe. Idempotent.
+docker compose run --rm etl localities # rebuild the place-name -> PIN layer
 docker compose run --rm etl verify     # read-only integrity check, exit 1 on failure
 docker compose run --rm etl export     # regenerate flat files + QA_SUMMARY.md
-docker compose run --rm etl test       # 17 regression tests
+docker compose run --rm etl test       # 20 regression tests
 docker compose run --rm etl refresh --dry-run   # see the monthly delta first
 docker compose run --rm etl refresh             # apply + write a dated report
 ```

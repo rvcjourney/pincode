@@ -13,7 +13,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY *.py entrypoint.sh schema.sql ./
 COPY tools/ ./tools/
 COPY tests/ ./tests/
-RUN chmod +x entrypoint.sh
+COPY web/ ./web/
+# also strip CRLF if the image is ever built from a Windows checkout without
+# .gitattributes applied - a \r on the shebang makes the script unrunnable
+RUN sed -i 's/\r$//' entrypoint.sh && chmod +x entrypoint.sh
 
 # raw/, out/ and reports/ are bind-mounted from the host by docker-compose
 RUN mkdir -p raw out reports
