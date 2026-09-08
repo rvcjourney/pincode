@@ -236,6 +236,54 @@ class DB:
         self.close()
 
 
+def pg_url_problem(url):
+    """Return a human-readable explanation if a Postgres URL is malformed.
+
+    The failure this exists for: `openssl rand -base64 32` emits the base64
+    alphabet, which includes '/'. Interpolated raw into a connection URL, that
+    '/' ends the authority section, so
+
+        postgresql://ck:R7x/Qm2Z+aB9c=@db:5432/ck_pincode
+
+    parses as host='ck', port='R7x', and libpq fails with the thoroughly
+    unhelpful "Servname not supported for ai_socktype". Catch it here and say
+    what actually went wrong.
+    """
+    _, _, rest = url.partition("://")
+    if not rest:
+        return None                       # bare URL: libpq reads PG* env vars
+    authority = rest.split("/", 1)[0]
+    if "@" in rest and "@" not in authority:
+        return ("the database password contains an unencoded '/', which ends the "
+                "URL authority - libpq then treats part of the password as the "
+                "hostname.\n"
+                "    Fix (preferred): drop the password from CK_DB_URL and set "
+                "PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE instead;\n"
+                "    CK_DB_URL=postgresql:// on its own is valid and libpq fills "
+                "in the rest.\n"
+                "    Or: percent-encode it - '/'->%2F, '@'->%40, ':'->%3A, "
+                "'+'->%2B, '#'->%23.\n"
+                "    Or: regenerate a URL-safe password: openssl rand -hex 32")
+    if authority:
+        hostport = authority.rsplit("@", 1)[-1]
+        if ":" in hostport:
+            port = hostport.rsplit(":", 1)[1]
+            if port and not port.isdigit():
+                return (f"the port in CK_DB_URL is {port!r}, which is not a number. "
+                        "This usually means an unencoded character in the password "
+                        "shifted the URL apart. See the encoding note above, or set "
+                        "PGHOST/PGUSER/PGPASSWORD/PGDATABASE and use a bare "
+                        "CK_DB_URL=postgresql://")
+    return None
+
+
+def pg_url(host, db, user, password, port=5432):
+    """Build a Postgres URL with every component correctly percent-encoded."""
+    from urllib.parse import quote
+    return (f"postgresql://{quote(user, safe='')}:{quote(password, safe='')}"
+            f"@{host}:{port}/{quote(db, safe='')}")
+
+
 def connect(url=None):
     url = url or os.environ.get("CK_DB_URL") or DEFAULT_URL
 
@@ -258,6 +306,13 @@ def connect(url=None):
             raise SystemExit(
                 "[!] PostgreSQL URL given but psycopg is not installed.\n"
                 "    pip install 'psycopg[binary]'")
+        problem = pg_url_problem(url)
+        if problem:
+            raise SystemExit("[!] " + problem)
+        # A bare 'postgresql://' is valid and intentional: libpq then reads
+        # PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE from the environment, which
+        # is the only way to pass a password containing URL-reserved characters
+        # without encoding it.
         return DB(psycopg.connect(url), "postgres")
 
     raise SystemExit(f"[!] unsupported CK_DB_URL: {url!r}\n"
@@ -265,5 +320,11 @@ def connect(url=None):
 
 
 def describe(url=None):
+    """A log-safe rendering of the target. Never returns the password."""
     url = url or os.environ.get("CK_DB_URL") or DEFAULT_URL
+    if url.rstrip("/") in ("postgresql:", "postgres:"):
+        # bare URL: the real target lives in the libpq environment variables
+        return ("postgresql://{u}:***@{h}:{p}/{d}".format(
+            u=os.environ.get("PGUSER", "?"), h=os.environ.get("PGHOST", "?"),
+            p=os.environ.get("PGPORT", "5432"), d=os.environ.get("PGDATABASE", "?")))
     return re.sub(r"//([^:/@]+):[^@]*@", r"//\1:***@", url)   # redact password

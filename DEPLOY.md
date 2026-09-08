@@ -196,6 +196,19 @@ cannot block initdb.
 **`psycopg` not installed** — only needed for `postgresql://` URLs.
 `pip install 'psycopg[binary]'`, or use the `etl` container which has it.
 
+**`failed to resolve host 'ck'` / `Servname not supported for ai_socktype`** —
+the password contains a `/`, which ends the URL authority, so the driver reads
+part of the password as the hostname. `openssl rand -base64 32` produces this
+routinely, because `/` is in the base64 alphabet.
+
+The compose stack no longer builds a URL at all — it passes `PGHOST`,
+`PGUSER`, `PGPASSWORD`, `PGDATABASE` and a bare `CK_DB_URL=postgresql://`, so
+any password works unencoded. If you hit this from your own tooling, either use
+the `PG*` variables the same way, percent-encode the password
+(`/`→`%2F`, `@`→`%40`, `:`→`%3A`, `+`→`%2B`, `#`→`%23`), or regenerate it with
+`openssl rand -hex 32`. **You do not need to change the database password** —
+the stored password is fine; only the URL form was broken.
+
 **Refresh exited 4** — the guard worked. Read the blocked report in `reports/`.
 Almost always a truncated API pull, not a real mass closure. Re-run the fetch.
 

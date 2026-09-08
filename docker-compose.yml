@@ -55,7 +55,16 @@ services:
       db:
         condition: service_healthy
     environment:
-      CK_DB_URL: postgresql://${POSTGRES_USER:-ck}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-ck_pincode}
+      # A bare URL on purpose. Interpolating the password into the URL breaks
+      # the moment it contains a URL-reserved character - and `openssl rand
+      # -base64 32` emits '/' and '+' routinely. libpq reads the PG* variables
+      # below, so no password ever has to be percent-encoded.
+      CK_DB_URL: "postgresql://"
+      PGHOST: db
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-ck}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      PGDATABASE: ${POSTGRES_DB:-ck_pincode}
       DATA_GOV_KEY: ${DATA_GOV_KEY:-}
     volumes:
       # raw payloads and generated exports live on the host, not in the image

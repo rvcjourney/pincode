@@ -384,6 +384,42 @@ def t_locality_load_is_idempotent():
 
 
 @test
+def t_pg_url_with_special_password_is_diagnosed():
+    """`openssl rand -base64 32` emits '/', which ends the URL authority. libpq
+    then reads part of the password as the hostname and dies with 'Servname not
+    supported for ai_socktype'. Catch it with a message that names the cause."""
+    from ckdb import pg_url_problem, pg_url
+
+    bad = "postgresql://ck:R7x/Qm2Z+aB9c=@db:5432/ck_pincode"
+    msg = pg_url_problem(bad)
+    assert msg and "unencoded '/'" in msg, msg
+    assert "PGPASSWORD" in msg, "the message must point at the actual fix"
+
+    # a bare URL is legitimate - libpq supplies everything from PG* env vars
+    assert pg_url_problem("postgresql://") is None
+    assert pg_url_problem("postgresql://ck:plainpw@db:5432/ck_pincode") is None
+    assert pg_url_problem("sqlite:///out/x.db") is None
+
+    # a non-numeric port is the other symptom of the same class of breakage
+    assert pg_url_problem("postgresql://ck:pw@db:notaport/x") is not None
+
+    # the builder must produce something that survives a round trip
+    from urllib.parse import urlsplit
+    u = pg_url("db", "ck_pincode", "ck", "R7x/Qm2Z+aB9c=")
+    assert pg_url_problem(u) is None, u
+    s = urlsplit(u)
+    assert s.hostname == "db" and s.port == 5432, (s.hostname, s.port)
+
+
+@test
+def t_describe_never_leaks_the_password():
+    from ckdb import describe
+    out = describe("postgresql://ck:sup3rs3cret@db:5432/ck_pincode")
+    assert "sup3rs3cret" not in out, out
+    assert "***" in out and "db:5432" in out, out
+
+
+@test
 def t_statement_splitter():
     from ckdb import split_statements
     s = split_statements("CREATE TABLE a (x TEXT DEFAULT 'a;b'); CREATE TABLE b (y TEXT);")
