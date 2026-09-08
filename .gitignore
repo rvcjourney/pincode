@@ -25,3 +25,9 @@ web/explorer.built.html
 # and run offline before anyone has a data.gov.in API key. If these files start
 # churning on every rebuild, move them to Git LFS rather than letting each
 # regeneration add another 25 MB blob to history.
+
+# local scratch notes - not part of the project
+setup.txt
+notes.txt
+*.local.md
+scratch/
