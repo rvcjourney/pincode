@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CK PIN Code Console</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ground:#F6F7F9; --surface:#FFFFFF; --surface-2:#F0F2F5;
+  --ink:#111823; --ink-2:#3D4756; --muted:#5C6675; --faint:#8A94A3;
+  --line:#DDE2E9; --line-2:#C8D0DA;
+  --accent:#1F6F6B; --accent-ink:#14504D; --accent-wash:#E4EFEE;
+  --warn:#9A5B06; --warn-wash:#FBF0DE; --warn-line:#E7C68A;
+  --bad:#A32219; --bad-wash:#FBE9E7;
+  --good:#166534; --good-wash:#E6F2EA;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  --sans:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0E1116; --surface:#161A21; --surface-2:#1B212A;
+  --ink:#E9EDF3; --ink-2:#BAC3CF; --muted:#96A0AE; --faint:#6E7889;
+  --line:#262D38; --line-2:#333C49;
+  --accent:#5FBDB6; --accent-ink:#8AD6D0; --accent-wash:#14302F;
+  --warn:#E0A652; --warn-wash:#33260F; --warn-line:#6B5222;
+  --bad:#EE8177; --bad-wash:#3A1A17; --good:#6FCF97; --good-wash:#12301F;
+}}
+:root[data-theme="dark"]{
+  --ground:#0E1116; --surface:#161A21; --surface-2:#1B212A;
+  --ink:#E9EDF3; --ink-2:#BAC3CF; --muted:#96A0AE; --faint:#6E7889;
+  --line:#262D38; --line-2:#333C49;
+  --accent:#5FBDB6; --accent-ink:#8AD6D0; --accent-wash:#14302F;
+  --warn:#E0A652; --warn-wash:#33260F; --warn-line:#6B5222;
+  --bad:#EE8177; --bad-wash:#3A1A17; --good:#6FCF97; --good-wash:#12301F;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
+     font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1400px;margin:0 auto;padding:18px 18px 48px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 24px;margin-bottom:14px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;
+         text-transform:uppercase;color:var(--accent);font-weight:600}
+h1{margin:0;font-size:24px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.sub{color:var(--muted);font-size:13px}
+.right{margin-left:auto;display:flex;gap:8px;align-items:center}
+button,.btn{font:inherit;font-size:12.5px;color:var(--ink-2);background:var(--surface);
+       border:1px solid var(--line-2);border-radius:7px;padding:6px 11px;cursor:pointer;
+       text-decoration:none;display:inline-block}
+button:hover,.btn:hover{border-color:var(--accent);color:var(--accent)}
+button.on{background:var(--accent-wash);border-color:var(--accent);color:var(--accent-ink);font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;
+       background:var(--line);border:1px solid var(--line);border-radius:10px;
+       overflow:hidden;margin-bottom:14px}
+.stat{background:var(--surface);padding:9px 12px}
+.stat .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
+         text-transform:uppercase;color:var(--faint)}
+.stat .v{display:block;font-family:var(--mono);font-size:18px;font-weight:600;
+         font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat.warn .v{color:var(--warn)}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+input[type=search],select{font:inherit;font-size:13px;padding:7px 9px;color:var(--ink);
+  background:var(--surface);border:1px solid var(--line-2);border-radius:7px}
+input[type=search]{font-family:var(--mono);min-width:230px;flex:1}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+label.chk{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-2);cursor:pointer}
+label.chk input{accent-color:var(--accent);margin:0}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.phd{display:flex;align-items:center;gap:12px;padding:9px 13px;border-bottom:1px solid var(--line);
+     background:var(--surface-2);flex-wrap:wrap}
+.count{font-family:var(--mono);font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.count b{color:var(--ink)}
+.pager{margin-left:auto;display:flex;gap:6px;align-items:center}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(--line-2);
+   text-align:left;padding:8px 11px;font-family:var(--mono);font-size:9.5px;
+   letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;white-space:nowrap}
+td{padding:7px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--surface-2)}
+.pin{font-family:var(--mono);font-weight:600}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right}
+.dim{color:var(--muted)}
+.pill{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;padding:2px 6px;border-radius:4px;border:1px solid transparent}
+.pill.good{background:var(--good-wash);color:var(--good)}
+.pill.bad{background:var(--bad-wash);color:var(--bad)}
+.pill.warn{background:var(--warn-wash);color:var(--warn);border-color:var(--warn-line)}
+.pill.mute{background:var(--surface-2);color:var(--muted);border-color:var(--line)}
+.detail{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.dhd{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:13px 15px;
+     border-bottom:1px solid var(--line);background:var(--surface-2)}
+.dpin{font-family:var(--mono);font-size:28px;font-weight:600;letter-spacing:.06em;line-height:1}
+.dbody{padding:15px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.dsec h3{margin:0 0 8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;
+         text-transform:uppercase;color:var(--faint);font-weight:600}
+.kv{display:flex;justify-content:space-between;gap:12px;padding:2px 0;font-size:13px}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;text-align:right}
+.kv dd.n{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.decomp{display:flex;gap:5px;margin-bottom:8px}
+.dig{flex:1;text-align:center;border:1px solid var(--line);border-radius:7px;padding:6px 3px;background:var(--ground)}
+.dig .d{font-family:var(--mono);font-size:16px;font-weight:600}
+.dig .l{font-size:8.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.dig.z{border-color:var(--accent);background:var(--accent-wash)}
+.dig.z .d{color:var(--accent-ink)}
+.spanbox{border:1px solid var(--warn-line);background:var(--warn-wash);border-radius:8px;padding:10px 12px}
+.spanbox p{margin:0 0 7px;font-size:12.5px;color:var(--warn)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin:0;padding:0;list-style:none}
+.chips li{font-family:var(--mono);font-size:11px;background:var(--surface);
+  border:1px solid var(--line-2);color:var(--ink-2);padding:2px 7px;border-radius:4px}
+.olist{max-height:230px;overflow:auto;display:flex;flex-direction:column;gap:4px}
+.orow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;
+      padding:4px 7px;border-radius:5px;background:var(--ground)}
+.empty{padding:34px 16px;text-align:center;color:var(--faint);font-size:13px}
+.dl{display:flex;flex-wrap:wrap;gap:7px}
+footer{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);
+       font-size:12px;color:var(--muted);max-width:60ch;line-height:1.5}
+footer a{color:var(--accent)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="eyebrow">CK PIN Code Master</div>
+      <h1>PIN Code Console</h1>
+      <div class="sub">Live from the master database &mdash; search, inspect and download.</div>
+    </div>
+    <div class="right">
+      <a class="btn" href="/api/docs" target="_blank" rel="noopener">API docs</a>
+      <button id="theme" type="button">Theme</button>
+    </div>
+  </header>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs">
+    <button class="on" data-tab="pincodes" type="button">PIN codes</button>
+    <button data-tab="offices" type="button">Post offices</button>
+    <button data-tab="localities" type="button">Place names</button>
+    <button data-tab="downloads" type="button">Downloads</button>
+  </div>
+
+  <div class="bar" id="bar"></div>
+
+  <section class="panel" id="panel">
+    <div class="phd">
+      <span class="count" id="count">Loading&hellip;</span>
+      <span class="pager">
+        <button id="prev" type="button">&larr; Prev</button>
+        <button id="next" type="button">Next &rarr;</button>
+      </span>
+    </div>
+    <div class="scroll"><table><thead><tr id="hrow"></tr></thead><tbody id="tbody"></tbody></table></div>
+    <div class="empty" id="empty" hidden>Nothing matches.</div>
+  </section>
+
+  <section class="detail" id="detail"></section>
+
+  <footer>
+    <strong style="color:var(--ink)">Department of Posts, Government of India, via data.gov.in.</strong>
+    Government Open Data Licence &ndash; India (GODL): free commercial use, attribution required.
+    Boundary polygons and any OpenStreetMap-derived place names are community sources &mdash;
+    verify before regulatory use.
+  </footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var nf = new Intl.NumberFormat("en-IN");
+var num = function(n){ return n === null || n === undefined ? "—" : nf.format(n); };
+var esc = function(s){
+  return String(s === null || s === undefined ? "" : s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+};
+var $ = function(id){ return document.getElementById(id); };
+
+var TABS = {
+  pincodes: {
+    url: "/api/pincodes",
+    cols: [["PIN","pincode","pin"],["Primary office","primary_office",""],
+           ["District","primary_district",""],["State / UT","primary_state",""],
+           ["Offices","n_offices","num"],["Districts","n_districts","ndist"],
+           ["Area km²","area_sqkm","num"],["Status","status","status"]],
+    filters: ["q","state","district","multi","deliverable"],
+    ph: "PIN, office or district"
+  },
+  offices: {
+    url: "/api/offices",
+    cols: [["Office","office_name",""],["PIN","pincode","pin"],["Type","office_type","type"],
+           ["Delivery","delivery_status","deliv"],["Taluk","taluk",""],
+           ["District","district",""],["State / UT","state",""],["Division","division_name",""]],
+    filters: ["q","state","district","office_type","closed"],
+    ph: "office name or PIN"
+  },
+  localities: {
+    url: "/api/localities",
+    cols: [["Place name","locality_name",""],["PIN","pincode","pin"],
+           ["Type","locality_type",""],["Source","source_id","src"]],
+    filters: ["q"],
+    ph: "place name, e.g. Viman Nagar"
+  }
+};
+
+var S = {tab:"pincodes", q:"", state:"", district:"", office_type:"",
+         multi:false, deliverable:false, closed:false, offset:0, limit:50, total:0};
+var STATES = [];
+
+function qs(){
+  var t = TABS[S.tab], p = new URLSearchParams();
+  p.set("limit", S.limit); p.set("offset", S.offset);
+  t.filters.forEach(function(f){
+    var v = S[f];
+    if (v === true) p.set(f, "true");
+    else if (v && v !== true) p.set(f, v);
+  });
+  return t.url + "?" + p.toString();
+}
+
+function buildBar(){
+  var t = TABS[S.tab], h = "";
+  if (S.tab === "downloads"){ $("bar").innerHTML = ""; return; }
+  h += '<input type="search" id="q" placeholder="' + t.ph + '" value="' + esc(S.q) + '">';
+  if (t.filters.indexOf("state") >= 0){
+    h += '<select id="state"><option value="">All states</option>' +
+         STATES.map(function(s){
+           return '<option value="' + esc(s.state_name) + '"' +
+                  (S.state === s.state_name ? " selected" : "") + '>' + esc(s.state_name) + '</option>';
+         }).join("") + '</select>';
+    h += '<select id="district"><option value="">All districts</option></select>';
+  }
+  if (t.filters.indexOf("office_type") >= 0){
+    h += '<select id="office_type"><option value="">All types</option>' +
+         ["HO","SO","BO"].map(function(x){
+           return '<option value="' + x + '"' + (S.office_type === x ? " selected" : "") + '>' + x + '</option>';
+         }).join("") + '</select>';
+  }
+  if (t.filters.indexOf("multi") >= 0)
+    h += '<label class="chk"><input type="checkbox" id="multi"' + (S.multi?" checked":"") + '> Spans &gt;1 district</label>';
+  if (t.filters.indexOf("deliverable") >= 0)
+    h += '<label class="chk"><input type="checkbox" id="deliverable"' + (S.deliverable?" checked":"") + '> Deliverable</label>';
+  if (t.filters.indexOf("closed") >= 0)
+    h += '<label class="chk"><input type="checkbox" id="closed"' + (S.closed?" checked":"") + '> Closed offices</label>';
+  $("bar").innerHTML = h;
+
+  var tm;
+  if ($("q")) $("q").addEventListener("input", function(e){
+    clearTimeout(tm); var v = e.target.value;
+    tm = setTimeout(function(){ S.q = v; S.offset = 0; load(); }, 200);
+  });
+  ["state","district","office_type"].forEach(function(id){
+    if ($(id)) $(id).addEventListener("change", function(e){
+      S[id] = e.target.value; S.offset = 0;
+      if (id === "state"){ S.district = ""; fillDistricts(); }
+      load();
+    });
+  });
+  ["multi","deliverable","closed"].forEach(function(id){
+    if ($(id)) $(id).addEventListener("change", function(e){
+      S[id] = e.target.checked; S.offset = 0; load();
+    });
+  });
+  if ($("state")) fillDistricts();
+}
+
+function fillDistricts(){
+  var sel = $("district");
+  if (!sel) return;
+  fetch("/api/districts?state=" + encodeURIComponent(S.state))
+    .then(function(r){ return r.json(); })
+    .then(function(ds){
+      sel.innerHTML = '<option value="">All districts</option>' + ds.map(function(d){
+        return '<option value="' + esc(d.district_name) + '"' +
+               (S.district === d.district_name ? " selected" : "") + '>' +
+               esc(d.district_name) + '</option>';
+      }).join("");
+    });
+}
+
+function cell(r, col){
+  var v = r[col[1]];
+  switch (col[2]){
+    case "pin": return '<span class="pin">' + esc(v) + '</span>';
+    case "num": return v === null || v === undefined ? '<span class="dim">—</span>' : num(v);
+    case "ndist": return v > 1 ? '<span class="pill warn">' + v + '</span>'
+                               : '<span class="dim">' + v + '</span>';
+    case "status":
+      if (r.status !== "active") return '<span class="pill mute">retired</span>';
+      return r.is_deliverable ? '<span class="pill good">deliverable</span>'
+                              : '<span class="pill bad">no delivery</span>';
+    case "type": return v ? esc(v) : '<span class="pill mute">unknown</span>';
+    case "deliv": return /^delivery/i.test(v || "") ? '<span class="pill good">delivery</span>'
+                                                    : '<span class="pill mute">' + esc(v || "—") + '</span>';
+    case "src": return '<span class="pill ' + (v === "osm_overpass" ? "warn" : "mute") + '">' + esc(v) + '</span>';
+  }
+  return v === null || v === undefined || v === "" ? '<span class="dim">—</span>' : esc(v);
+}
+
+function load(){
+  if (S.tab === "downloads") return renderDownloads();
+  var t = TABS[S.tab];
+  $("hrow").innerHTML = t.cols.map(function(c){ return "<th>" + c[0] + "</th>"; }).join("");
+  $("count").textContent = "Loading…";
+  fetch(qs()).then(function(r){ return r.json(); }).then(function(d){
+    S.total = d.total;
+    $("count").innerHTML = "<b>" + num(d.total) + "</b> rows &middot; showing " +
+      num(Math.min(d.offset + 1, d.total)) + "–" + num(Math.min(d.offset + d.limit, d.total));
+    $("empty").hidden = d.rows.length > 0;
+    $("tbody").innerHTML = d.rows.map(function(r){
+      return '<tr data-pin="' + esc(r.pincode) + '">' +
+        t.cols.map(function(c){ return '<td class="' + (c[2] === "num" ? "num" : "") + '">' + cell(r, c) + "</td>"; }).join("") +
+        "</tr>";
+    }).join("");
+    $("prev").disabled = d.offset === 0;
+    $("next").disabled = d.offset + d.limit >= d.total;
+  }).catch(function(e){ $("count").textContent = "Error: " + e; });
+}
+
+function renderDownloads(){
+  $("hrow").innerHTML = "";
+  $("tbody").innerHTML = "";
+  $("empty").hidden = true;
+  $("count").innerHTML = "<b>CSV downloads</b> &middot; streamed live from the database";
+  fetch("/api/downloads").then(function(r){ return r.json(); }).then(function(names){
+    $("detail").innerHTML =
+      '<div class="dhd"><strong>Available exports</strong></div><div class="dbody"><div class="dsec">' +
+      '<div class="dl">' + names.map(function(n){
+        return '<a class="btn" href="/api/download/' + n + '.csv" download>' + n + '.csv</a>';
+      }).join("") + '</div>' +
+      '<p class="sub" style="margin-top:12px">Generated on request from the live master, ' +
+      'so they always match what the API returns. <code>post_offices.csv</code> is ~26 MB.</p>' +
+      "</div></div>";
+  });
+}
+
+function detail(pin){
+  fetch("/api/pincode/" + encodeURIComponent(pin))
+    .then(function(r){ if (!r.ok) throw new Error("PIN " + pin + " not found"); return r.json(); })
+    .then(function(d){
+      var pills = "";
+      if (d.status !== "active") pills += '<span class="pill mute">retired</span> ';
+      else pills += d.is_deliverable ? '<span class="pill good">deliverable</span> '
+                                     : '<span class="pill bad">no delivery office</span> ';
+      if (d.n_districts > 1) pills += '<span class="pill warn">spans ' + d.n_districts + ' districts</span> ';
+      if (d.n_states > 1) pills += '<span class="pill warn">spans ' + d.n_states + ' states</span> ';
+      if (!d.has_boundary) pills += '<span class="pill mute">no polygon</span> ';
+
+      var st = d.structure;
+      var decomp = '<div class="decomp">' +
+        '<div class="dig z"><div class="d">' + st.zone + '</div><div class="l">Zone</div></div>' +
+        '<div class="dig"><div class="d">' + st.sub_zone + '</div><div class="l">Sub-zone</div></div>' +
+        '<div class="dig"><div class="d">' + st.sorting_district + '</div><div class="l">Sorting</div></div>' +
+        '<div class="dig"><div class="d">' + st.office + '</div><div class="l">Office</div></div></div>';
+
+      var span = "";
+      if (d.districts_spanned && d.districts_spanned.length > 1){
+        span = '<div class="dsec"><h3>Districts covered</h3><div class="spanbox">' +
+          '<p>This PIN spans <b>' + d.districts_spanned.length + ' districts</b> across ' +
+          num(d.n_offices) + ' offices. Treat <b>' + esc(d.primary_district) +
+          '</b> as a default the user can override, never as verified.</p><ul class="chips">' +
+          d.districts_spanned.map(function(x){ return "<li>" + esc(x.district) + "</li>"; }).join("") +
+          "</ul></div></div>";
+      }
+
+      var offices = (d.offices || []).map(function(o){
+        return '<div class="orow"><span>' + esc(o.office_name) +
+          ' <span class="dim">' + esc(o.office_type || "?") + '</span></span>' +
+          '<span class="dim">' + esc(o.district || "") + "</span></div>";
+      }).join("") || '<div class="dim">none</div>';
+
+      var locs = (d.localities || []).slice(0, 40).map(function(l){
+        return "<li>" + esc(l.locality_name) + "</li>";
+      }).join("") || "";
+
+      $("detail").innerHTML =
+        '<div class="dhd"><span class="dpin">' + esc(d.pincode) + "</span><div>" + pills + "</div></div>" +
+        '<div class="dbody">' +
+        '<div class="dsec"><h3>PIN structure</h3>' + decomp +
+          '<dl style="margin:0">' +
+          '<div class="kv"><dt>Primary office</dt><dd>' + esc(d.primary_office || "—") + "</dd></div>" +
+          '<div class="kv"><dt>District</dt><dd>' + esc(d.primary_district || "—") + "</dd></div>" +
+          '<div class="kv"><dt>State / UT</dt><dd>' + esc(d.primary_state || "—") + "</dd></div>" +
+          "</dl></div>" +
+        '<div class="dsec"><h3>Counts &amp; geography</h3><dl style="margin:0">' +
+          '<div class="kv"><dt>Post offices</dt><dd class="n">' + num(d.n_offices) + "</dd></div>" +
+          '<div class="kv"><dt>Delivery offices</dt><dd class="n">' + num(d.n_delivery) + "</dd></div>" +
+          '<div class="kv"><dt>Centroid</dt><dd class="n">' +
+            (d.centroid_lat === null ? '<span class="pill mute">none</span>'
+              : d.centroid_lat.toFixed(4) + ", " + d.centroid_lon.toFixed(4)) + "</dd></div>" +
+          '<div class="kv"><dt>Area</dt><dd class="n">' +
+            (d.area_sqkm === null ? "—" : num(d.area_sqkm) + " km²") + "</dd></div>" +
+          "</dl></div>" +
+        '<div class="dsec"><h3>Offices (' + num((d.offices || []).length) + ")</h3>" +
+          '<div class="olist">' + offices + "</div></div>" +
+        (locs ? '<div class="dsec"><h3>Place names</h3><ul class="chips">' + locs + "</ul></div>" : "") +
+        span +
+        "</div>";
+      $("detail").scrollIntoView({behavior:"smooth", block:"nearest"});
+    })
+    .catch(function(e){ $("detail").innerHTML = '<div class="empty">' + esc(e.message) + "</div>"; });
+}
+
+// ------------------------------------------------------------------ wiring
+$("tbody").addEventListener("click", function(e){
+  var tr = e.target.closest("tr[data-pin]");
+  if (tr && tr.getAttribute("data-pin")) detail(tr.getAttribute("data-pin"));
+});
+document.querySelector(".tabs").addEventListener("click", function(e){
+  var b = e.target.closest("button[data-tab]");
+  if (!b) return;
+  document.querySelectorAll(".tabs button").forEach(function(x){ x.classList.remove("on"); });
+  b.classList.add("on");
+  S.tab = b.getAttribute("data-tab");
+  S.offset = 0; S.q = ""; S.district = "";
+  $("detail").innerHTML = "";
+  buildBar(); load();
+});
+$("prev").addEventListener("click", function(){
+  S.offset = Math.max(0, S.offset - S.limit); load();
+});
+$("next").addEventListener("click", function(){
+  if (S.offset + S.limit < S.total){ S.offset += S.limit; load(); }
+});
+$("theme").addEventListener("click", function(){
+  var cur = document.documentElement.getAttribute("data-theme");
+  var dark = cur ? cur === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
+});
+
+fetch("/api/stats").then(function(r){ return r.json(); }).then(function(s){
+  var tiles = [["PIN codes", s.pincodes, ""], ["Active", s.active, ""],
+    ["Deliverable", s.deliverable, ""], ["Post offices", s.offices, ""],
+    ["Place names", s.localities, ""], ["Spans >1 district", s.multi_district, "warn"],
+    ["With polygon", s.with_polygon, ""], ["Change log", s.changes, ""]];
+  $("stats").innerHTML = tiles.map(function(t){
+    return '<div class="stat ' + t[2] + '"><span class="k">' + t[0] +
+           '</span><span class="v">' + num(t[1]) + "</span></div>";
+  }).join("");
+}).catch(function(){ $("stats").innerHTML = '<div class="stat"><span class="k">stats</span><span class="v">—</span></div>'; });
+
+fetch("/api/states").then(function(r){ return r.json(); }).then(function(s){
+  STATES = s; buildBar(); load();
+}).catch(function(){ buildBar(); load(); });
+
+$("detail").innerHTML = '<div class="empty">Select a row to inspect a PIN code.</div>';
+})();
+</script>
+</body>
+</html>

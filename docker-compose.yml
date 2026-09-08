@@ -73,6 +73,36 @@ services:
       - ./reports:/app/reports
     entrypoint: ["/app/entrypoint.sh"]
 
+  # Read-only HTTP interface: browsable UI at / and the JSON API the CK App calls.
+  #   docker compose up -d web   ->  http://<vps>:8000
+  web:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      CK_DB_URL: "postgresql://"
+      PGHOST: db
+      PGPORT: "5432"
+      PGUSER: ${POSTGRES_USER:-ck}
+      PGPASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+      PGDATABASE: ${POSTGRES_DB:-ck_pincode}
+    # Default binds to localhost only - put a reverse proxy with TLS in front
+    # before exposing this. Set CK_WEB_BIND=0.0.0.0 in .env to open it up
+    # directly, but only behind a firewall: there is no auth on this service.
+    ports:
+      - "${CK_WEB_BIND:-127.0.0.1}:${CK_WEB_PORT:-8000}:8000"
+    volumes:
+      - ./out:/app/out:ro
+    entrypoint: ["/app/entrypoint.sh", "serve"]
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health',timeout=5).status==200 else 1)\""]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
   # One-shot backup. Run from cron on the host:
   #   0 3 * * * cd /srv/ck-pincode && docker compose run --rm backup
   backup:

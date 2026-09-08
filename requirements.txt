@@ -5,3 +5,7 @@ psycopg[binary]>=3.1
 # build_geo.py only
 shapely>=2.0
 openpyxl>=3.1
+
+# serve.py only - the read-only HTTP UI + JSON API
+fastapi>=0.110
+uvicorn[standard]>=0.27

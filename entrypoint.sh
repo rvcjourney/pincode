@@ -26,6 +26,7 @@ case "$cmd" in
   geo)        exec python build_geo.py "$@" ;;
   fetch)      exec python fetch_datagov.py "$@" ;;
   verify)     exec python tools/verify.py "$@" ;;
+  serve)      exec python serve.py "$@" ;;
   explorer)   exec python tools/build_explorer.py "$@" ;;
   test)       exec python tests/test_pipeline.py "$@" ;;
   # First-run convenience: everything needed to go from a fresh clone to a

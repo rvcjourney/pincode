@@ -144,6 +144,43 @@ docker compose exec db dropdb -U ck restore_test
 
 ---
 
+## The web interface
+
+```bash
+docker compose up -d web
+curl localhost:8000/health          # {"status":"ok","offices":154781}
+```
+
+Browsable UI at `/` and a JSON API at `/api/*`, both read-only and served from
+the live database — not a snapshot. `/api/docs` is the generated API reference.
+
+| Endpoint | Use |
+|---|---|
+| `GET /api/lookup?q=` | **The one call an address form makes.** A PIN or a place name in, matching PINs out, each flagged with `straddles_districts`. |
+| `GET /api/pincode/{pin}` | Full detail: offices, place names, districts spanned, geometry, PIN digit structure |
+| `GET /api/pincodes` | Paginated, filter by state/district/multi/deliverable |
+| `GET /api/offices` | All 154,781, paginated; `closed=true` for the audit trail |
+| `GET /api/localities` | Place-name search across 151,320 names |
+| `GET /api/download/{name}.csv` | Streamed CSV, generated on request |
+
+**It binds to `127.0.0.1:8000` by default and has no authentication.** Reach it
+over an SSH tunnel:
+
+```bash
+ssh -L 8000:localhost:8000 you@your-vps     # then open http://localhost:8000
+```
+
+To expose it properly, put a reverse proxy with TLS in front (Caddy is two
+lines) and add auth there. Only if it is already behind a firewall:
+
+```bash
+echo 'CK_WEB_BIND=0.0.0.0' >> .env
+docker compose up -d web
+```
+
+Never point it at a writable database role — create the read-only `ck_app` role
+below and give the `web` service that instead.
+
 ## Connecting the CK App
 
 The DB is bound to `127.0.0.1:5432` — **not** reachable from the internet. Keep

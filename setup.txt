@@ -1,0 +1,11 @@
+root@vmi3417798:/var/option/pincode# 
+
+cp .env.example .env
+openssl rand -base64 32        # paste into POSTGRES_PASSWORD
+nano .env
+
+docker compose up -d db
+docker compose ps              # wait for "healthy"
+
+mkdir -p raw reports
+docker compose run --rm etl all
