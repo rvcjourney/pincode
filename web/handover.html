@@ -129,7 +129,7 @@ schema, ready to import as a lookup table and bind to the onboarding form.</p>
   <div class="cell"><span class="k">Name&ndash;PIN links</span><span class="v">154,749</span></div>
 </div>
 
-<h3>Real output &mdash; the sample PINs from the brief</h3>
+<h3>Sample output</h3>
 
 <div class="tw"><table>
   <thead><tr><th>PIN</th><th>District</th><th>Locality names</th><th class="num">Count</th></tr></thead>
@@ -147,24 +147,18 @@ schema, ready to import as a lookup table and bind to the onboarding form.</p>
   </tbody>
 </table></div>
 
-<p>These are the values actually in the database, not illustrations. They differ
-from the example table in the brief, which is worth a moment of explanation.</p>
+<h2>Coverage limits worth knowing</h2>
 
-<h2>One honest gap: Kharadi</h2>
+<p>Names come from India Post's office directory, so the layer contains every
+place India Post has named an office after &mdash; and only those. Informal
+urban colony names with no post office of their own fall outside it. In Pune,
+for example, <em>Kharadi</em> is absent: the only <em>Kharadi B.O</em> entries
+nationally are in Pali (Rajasthan) and West Nimar (Madhya Pradesh). Street-level
+names behave the same way.</p>
 
-<div class="note">
-  <p><strong>Kharadi does not appear under 411014 &mdash; and cannot, from this data source.</strong></p>
-  <p>The method derives place names from India Post's office directory, so it can
-  only return places India Post has named an office after. Kharadi has no post
-  office of its own. The only <em>Kharadi B.O</em> entries in the national
-  directory are in Pali (Rajasthan) and West Nimar (Madhya Pradesh) &mdash;
-  different places entirely.</p>
-  <p>The same applies to street-level names such as Waterfield Road or Pali Hill:
-  real locations, but not postal offices, so no postal dataset contains them.</p>
-</div>
-
-<p>This is the boundary of the free authoritative data, and it affects a small
-number of informal urban colony names in metros. Two ways to close it:</p>
+<p>This affects a small number of metro neighbourhoods, and it is worth deciding
+about before the onboarding form ships, because those are exactly the names
+urban candidates type. Two ways to close it:</p>
 
 <div class="tw"><table>
   <thead><tr><th>Option</th><th>Gets you</th><th>Cost</th><th>Catch</th></tr></thead>
