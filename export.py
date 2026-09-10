@@ -61,6 +61,40 @@ def r4(v):
     return None if v is None else round(v, 4)
 
 
+def write_locality_lookup(db, ex):
+    """One row per PIN with its place names collapsed into a single cell.
+
+    A denormalised convenience view for onboarding autosuggest - NOT the
+    storage model. locality_pincode stays many-to-many, because a name in a
+    comma-separated cell cannot be indexed, licensed, or expired individually.
+    Import this as a read-only lookup table and rebuild it on every refresh.
+
+    Aggregated in Python on purpose: SQLite spells it GROUP_CONCAT and Postgres
+    spells it STRING_AGG, and this has to run on both.
+    """
+    byline = {}
+    for r in db.rows("""SELECT pincode, locality_name FROM v_pincode_localities
+                        ORDER BY pincode, locality_name"""):
+        byline.setdefault(r["pincode"], []).append(r["locality_name"])
+
+    meta = {r["pincode"]: r for r in db.rows(
+        "SELECT pincode, primary_district, primary_state, status FROM pincode")}
+
+    p = os.path.join(ex, "pincode_localities.csv")
+    with open(p, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["pincode", "primary_district", "primary_state",
+                    "locality_names", "total_localities_count", "status"])
+        for pin in sorted(byline):
+            names = byline[pin]
+            m = meta.get(pin, {})
+            w.writerow([pin, m.get("primary_district") or "", m.get("primary_state") or "",
+                        ", ".join(names), len(names), m.get("status") or ""])
+    print(f"[i] {'pincode_localities.csv':34s} {len(byline):>8,} rows  "
+          f"{os.path.getsize(p)/1e6:6.2f} MB")
+    return len(byline)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", default=None, help="CK_DB_URL override")
@@ -97,6 +131,7 @@ def main():
     print(f"[i] {'pincode_lookup.min.json':34s} {len(lut):>8,} keys  "
           f"{os.path.getsize(p)/1e6:6.2f} MB")
 
+    write_locality_lookup(db, ex)
     write_qa(db, a.out)
     db.close()
 
