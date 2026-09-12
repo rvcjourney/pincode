@@ -93,6 +93,16 @@ services:
       # from the browser; anyone holding the token can then modify the master,
       # so treat it like a password and never expose this service without TLS.
       CK_ADMIN_TOKEN: ${CK_ADMIN_TOKEN:-}
+      # Required by the Fetch / Preview tasks: this service runs refresh.py as a
+      # subprocess, so it needs the API key just as the etl service does.
+      # Without it the button fails with "set DATA_GOV_KEY" even though the key
+      # is in .env - .dockerignore keeps .env out of the image, so the
+      # container cannot read the file and must be handed the value.
+      DATA_GOV_KEY: ${DATA_GOV_KEY:-}
+      # Addresses allowed to run tasks without a token (comma-separated, CIDR
+      # accepted). Loopback is always trusted unless CK_TRUST_LOCAL=0.
+      CK_TRUST_IPS: ${CK_TRUST_IPS:-}
+      CK_TRUST_LOCAL: ${CK_TRUST_LOCAL:-1}
     # Default binds to localhost only - put a reverse proxy with TLS in front
     # before exposing this. Set CK_WEB_BIND=0.0.0.0 in .env to open it up
     # directly, but only behind a firewall: there is no auth on the read paths.

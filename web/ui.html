@@ -546,7 +546,7 @@ function renderOps(){
            + "also runs on the server with <code>python refresh.py --dry-run</code>.</div>";
     } else {
       ctrl = '<div class="bar" style="margin:0 0 10px">'
-           + '<input type="search" id="tok" placeholder="admin token" value="' + esc(TOKEN) + '">'
+           + '<input type="password" id="tok" placeholder="admin token" autocomplete="off" value="' + esc(TOKEN) + '">'
            + '<button id="savetok" type="button">Unlock</button></div>'
            + '<div class="taskpanel" id="taskbtns"><span class="opsub">enter the token '
            + "to load tasks</span></div>" + LOG;

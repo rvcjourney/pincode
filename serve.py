@@ -825,23 +825,54 @@ LOOPBACK = {"127.0.0.1", "::1", "localhost", "::ffff:127.0.0.1"}
 # SSH tunnel needs no token. Set CK_TRUST_LOCAL=0 to require one even there.
 TRUST_LOCAL = os.environ.get("CK_TRUST_LOCAL", "1").strip() not in ("0", "false", "no")
 
+# Extra addresses allowed to run the pipeline without a token, e.g.
+#   CK_TRUST_IPS=203.0.113.7,198.51.100.0/24
+# Preferable to a token on a plain-HTTP host: an allowlist sends no secret over
+# the wire at all, so there is nothing to intercept. Find your address with
+# `curl ifconfig.me`. Note a home connection's address usually changes.
+TRUST_IPS = [x.strip() for x in os.environ.get("CK_TRUST_IPS", "").split(",") if x.strip()]
+
+
+def _trusted_peer(host):
+    """Is this address on the allowlist? Accepts plain addresses and CIDRs."""
+    if not host:
+        return False
+    try:
+        import ipaddress
+        ip = ipaddress.ip_address(host)
+    except ValueError:
+        return host in TRUST_IPS
+    for entry in TRUST_IPS:
+        try:
+            if "/" in entry:
+                if ip in ipaddress.ip_network(entry, strict=False):
+                    return True
+            elif ip == ipaddress.ip_address(entry):
+                return True
+        except ValueError:
+            continue
+    return False
+
 
 def _is_local(request):
-    """True when the TCP peer is this machine.
+    """True when the peer is this machine, or an explicitly allowlisted address.
 
-    Deliberately reads request.client, never X-Forwarded-For: a header is
+    Deliberately reads request.client, never X-Forwarded-For: that header is
     attacker-controlled, so trusting it would let anyone on the internet claim
     to be localhost. Behind a reverse proxy every request looks local, which is
-    why TRUST_LOCAL must be turned off in that setup.
+    why TRUST_LOCAL must be set to 0 in that setup.
     """
     try:
-        return bool(request.client) and request.client.host in LOOPBACK
+        host = request.client.host if request.client else None
     except Exception:
         return False
+    if host in LOOPBACK and TRUST_LOCAL:
+        return True
+    return _trusted_peer(host)
 
 
 def _require_token(token, request=None):
-    if request is not None and TRUST_LOCAL and _is_local(request):
+    if request is not None and _is_local(request):
         return                      # same machine: no token needed
     if not ADMIN_TOKEN:
         # not configured and not local: behave as though the route does not exist
@@ -920,7 +951,7 @@ def admin_run(name: str, request: Request, confirm: bool = False,
     _require_token(x_ck_token, request)
     if name not in TASKS:
         raise HTTPException(404, f"unknown task '{name}'")
-    if TASKS[name]["writes"] and not confirm and not (TRUST_LOCAL and _is_local(request)):
+    if TASKS[name]["writes"] and not confirm and not _is_local(request):
         raise HTTPException(400, f"'{name}' modifies the master; pass confirm=true")
 
     global _running
@@ -1057,8 +1088,8 @@ def pipeline_status(request: Request):
         directory = next((s for s in sources
                           if s["source_id"] == "datagov_directory"), None)
         return {
-            "admin_enabled": bool(ADMIN_TOKEN) or (TRUST_LOCAL and _is_local(request)),
-            "local_trusted": TRUST_LOCAL and _is_local(request),
+            "admin_enabled": bool(ADMIN_TOKEN) or _is_local(request),
+            "local_trusted": _is_local(request),
             "running_job": _running,
             "sources": sources,
             "checks": checks,
