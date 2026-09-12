@@ -21,14 +21,14 @@ Exit codes: 0 ok, 3 no key / fetch failed, 4 sanity guard tripped (refuses a
 snapshot that would close >2% of offices - a truncated pull looks exactly like a
 mass closure event and silently applying one would wipe live serviceability).
 """
-import argparse, json, os, subprocess, sys
+import argparse, json, os, subprocess, sys, time
 from collections import Counter
 from datetime import datetime, timezone
 
 import ckdb
 import rollup
 from build_db import (office_key, canon_state, title, OFFICE_TYPE, _lat, _lon,
-                      ensure_dimensions, fill_missing_centroids)
+                      ensure_dimensions, fill_missing_centroids, fix_coords)
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 NOW = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -39,13 +39,73 @@ TRACKED = ["office_type", "delivery_status", "circle_name", "region_name",
            "division_name", "taluk", "district_raw", "state_raw", "latitude", "longitude"]
 
 
-def fetch_snapshot(path, key, workers):
+def _pages_done(path):
+    """How many pages are already safely on disk, from the resume ledger."""
+    try:
+        with open(path + ".done") as f:
+            return len(f.read().split())
+    except OSError:
+        return 0
+
+
+def fetch_snapshot(path, key, workers, budget_minutes=45):
+    """Keep fetching until every page is in, or until it is clearly stuck.
+
+    data.gov.in throttles on both concurrency and sustained volume, so one pass
+    over a 165k-row resource is regularly cut off partway. The fetcher records
+    completed offsets in <out>.done and fsyncs rows *before* marking them, so
+    re-running resumes exactly where it stopped - never restarting, never
+    leaving a hole. This keeps resuming until the fetcher reports a complete
+    pull, which is what makes a single click enough.
+
+    Two ways it stops rather than looping forever:
+      * a wall-clock budget, so a job cannot run all night; and
+      * a stall detector - if three consecutive attempts add no new pages, the
+        problem is not throttling and retrying will not fix it.
+    Either way nothing is lost: the next run resumes from the same ledger.
+    """
     os.makedirs(os.path.dirname(path), exist_ok=True)
-    cmd = [sys.executable, os.path.join(HERE, "fetch_datagov.py"), RESOURCE, path,
-           "--key", key, "--workers", str(workers)]
-    print("[i] fetching " + RESOURCE, flush=True)
-    r = subprocess.run(cmd)
-    return r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 0
+    deadline = time.time() + budget_minutes * 60
+    attempt, stalls, before = 0, 0, _pages_done(path)
+
+    while time.time() < deadline:
+        attempt += 1
+        # first pass at the requested concurrency, then back off - throttling
+        # responds far better to fewer requests than to more retries
+        w = workers if attempt == 1 else (2 if attempt < 4 else 1)
+        print(f"[i] fetching {RESOURCE} - attempt {attempt}, "
+              f"{w} worker{'s' if w > 1 else ''}, {before} page(s) already done",
+              flush=True)
+        r = subprocess.run([sys.executable, os.path.join(HERE, "fetch_datagov.py"),
+                            RESOURCE, path, "--key", key, "--workers", str(w)])
+
+        after = _pages_done(path)
+        if r.returncode == 0 and os.path.exists(path) and os.path.getsize(path) > 0:
+            print(f"[i] complete after {attempt} attempt(s), {after} page(s)", flush=True)
+            return True
+
+        gained = after - before
+        before = after
+        if gained > 0:
+            stalls = 0
+            print(f"[i] throttled after {gained} more page(s) - resuming", flush=True)
+        else:
+            stalls += 1
+            print(f"[!] no progress on attempt {attempt} "
+                  f"({stalls}/3 before giving up)", flush=True)
+            if stalls >= 3:
+                print("[!] the API is not returning data - this is not throttling. "
+                      "Nothing is lost; re-run later and it resumes from page "
+                      f"{after}.", file=sys.stderr)
+                return False
+
+        wait = min(15 * attempt, 120)
+        print(f"[i] waiting {wait}s for the rate limit to clear", flush=True)
+        time.sleep(wait)
+
+    print(f"[!] {budget_minutes}-minute budget reached with {before} page(s) done. "
+          "Nothing is lost; re-run and it resumes from there.", file=sys.stderr)
+    return False
 
 
 def load_new(path):
@@ -74,8 +134,15 @@ def load_new(path):
                 "division_name": r.get("divisionname"), "taluk": title(r.get("taluk")),
                 "district_raw": title(r.get("district") or r.get("districtname")),
                 "state_raw": canon_state(r.get("statename")),
-                "latitude": _lat(r.get("latitude")), "longitude": _lon(r.get("longitude")),
+                "latitude": None, "longitude": None,      # set just below
             }
+            # Apply the SAME coordinate repair build_db does. Without it the
+            # diff compares repaired values in the database against raw values
+            # from the feed: 4,954 phantom lat/long "changes" on a snapshot with
+            # no real movement, and every refresh would write the 780 swapped
+            # and 1,606 out-of-India coordinates straight back in.
+            out[k]["latitude"], out[k]["longitude"], _ = fix_coords(
+                _lat(r.get("latitude")), _lon(r.get("longitude")))
     if dupes:
         print(f"[!] {len(dupes)} duplicate office_key(s) in snapshot, first kept", flush=True)
     return out
@@ -104,7 +171,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--db", default=None, help="CK_DB_URL override")
     ap.add_argument("--key", default=os.environ.get("DATA_GOV_KEY", ""))
-    ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--workers", type=int, default=3,
+                help="parallel requests; data.gov.in throttles above ~4")
     ap.add_argument("--snapshot", help="use an already-downloaded jsonl instead of fetching")
     ap.add_argument("--dry-run", action="store_true", help="report only, write nothing")
     ap.add_argument("--force", action="store_true", help="skip the 2% sanity guard")
@@ -141,11 +209,12 @@ def main():
         print(f"[!] snapshot would close {len(removed):,} of {len(cur):,} offices (>2%). "
               f"Refusing. Re-run with --force only after reading the blocked report.",
               file=sys.stderr)
-        write_report(added, removed, modified, new, cur, blocked=True)
+        write_report(added, removed, modified, new, cur, blocked=True,
+                     snapshot=a.snapshot)
         sys.exit(4)
 
     if a.dry_run:
-        write_report(added, removed, modified, new, cur)
+        write_report(added, removed, modified, new, cur, snapshot=a.snapshot)
         print("[i] dry run, nothing written")
         db.close()
         return
@@ -200,11 +269,12 @@ def main():
              change_type, field, old_value, new_value) VALUES (?,?,?,?,?,?,?,?)""", chg)
     db.commit()
     print(f"[i] change_log rows written: {len(chg):,}", flush=True)
-    write_report(added, removed, modified, new, cur, db=db)
+    write_report(added, removed, modified, new, cur, db=db, snapshot=a.snapshot)
     db.close()
 
 
-def write_report(added, removed, modified, new, cur, db=None, blocked=False):
+def write_report(added, removed, modified, new, cur, db=None, blocked=False,
+                 snapshot=None):
     d = os.path.join(HERE, "reports")
     os.makedirs(d, exist_ok=True)
     p = os.path.join(d, f"change_report_{TODAY}.md")
@@ -251,6 +321,30 @@ def write_report(added, removed, modified, new, cur, db=None, blocked=False):
     with open(p, "w", encoding="utf-8") as f:
         f.write("\n".join(L))
     print(f"[i] report -> {p}", flush=True)
+
+    # Machine-readable twin of the report. The console reads this to show what
+    # WOULD change before anyone confirms an apply, and it records the snapshot
+    # path so the apply reuses the downloaded file instead of pulling 165,595
+    # rows a second time.
+    summary = {
+        "generated_at": NOW,
+        "blocked": bool(blocked),
+        "applied": db is not None,
+        "snapshot": os.path.abspath(snapshot) if snapshot else None,
+        "snapshot_offices": len(new),
+        "db_offices": len(cur),
+        "added": len(added),
+        "removed": len(removed),
+        "modified": len(modified),
+        "by_field": dict(Counter(f for _, f, _, _ in modified).most_common()),
+        "sample_added": [{"pincode": new[k]["pincode"], "name": new[k]["office_name"],
+                          "district": new[k]["district_raw"]} for k in added[:10]],
+        "sample_removed": [{"pincode": cur[k]["pincode"], "name": cur[k]["office_name"],
+                            "district": cur[k]["district_raw"]} for k in removed[:10]],
+        "report": os.path.basename(p),
+    }
+    with open(os.path.join(d, "last_refresh.json"), "w", encoding="utf-8") as f:
+        json.dump(summary, f, indent=1)
 
 
 if __name__ == "__main__":

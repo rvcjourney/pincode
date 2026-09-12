@@ -22,6 +22,38 @@ import re
 DEFAULT_URL = "sqlite:///out/ck_pincode.db"
 
 
+def load_env(path=None):
+    """Read .env into the environment, the way docker-compose already does.
+
+    Without this, `python serve.py` and `python refresh.py` run with no
+    DATA_GOV_KEY even though it sits in .env - the file is a compose feature,
+    not a Python one - and the refresh fails with "set DATA_GOV_KEY" while the
+    key is plainly there. Real environment variables win, so nothing set by
+    compose or the shell is ever overridden.
+    """
+    path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(path):
+        return 0
+    n = 0
+    try:
+        with open(path, encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, _, v = line.partition("=")
+                k, v = k.strip(), v.strip().strip('"').strip("'")
+                if k and k not in os.environ:
+                    os.environ[k] = v
+                    n += 1
+    except OSError:
+        return 0
+    return n
+
+
+load_env()      # every entry point imports ckdb, so this runs once, early
+
+
 # --------------------------------------------------------------- translation
 def _qmark_to_pyformat(sql):
     """'?' -> '%s' for psycopg.

@@ -23,6 +23,7 @@ import argparse, csv, hashlib, json, os, re, sys
 from datetime import datetime, timezone
 
 import ckdb
+import fuzzy
 import rollup
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -66,7 +67,23 @@ STATE_FIX = {
     "JAMMU AND KASHMIR": "Jammu & Kashmir", "JAMMU & KASHMIR": "Jammu & Kashmir",
     "ORISSA": "Odisha", "PONDICHERRY": "Puducherry",
     "UTTARANCHAL": "Uttarakhand", "TAMILNADU": "Tamil Nadu",
+    # title() preserves short all-caps words as acronyms (NCR, GPO), which is
+    # right until the real name IS three letters. These need to be explicit.
+    "GOA": "Goa", "DIU": "Daman & Diu",
 }
+
+# Placeholders the directory uses where a value is simply absent. Left alone,
+# 'NA' becomes a 37th state and a district of its own: 712 offices carried it,
+# and it inflated the multi-state PIN count from 52 to 289.
+NULLISH = {"", "NA", "N.A.", "N/A", "NIL", "NULL", "NONE", "-", "--", "."}
+
+# Words that really are acronyms and must stay upper-case. Everything else gets
+# title-cased. The previous rule - keep any word of 3 letters or fewer that
+# arrives upper-case - produced "NEW Delhi", "THE Nilgiris", "North GOA",
+# "RAE Bareli", "LEH Ladakh" and 12 more, because Indian place names are full
+# of short words that are not acronyms at all.
+KEEP_UPPER = {"NCR", "NTR", "GPO", "RMS", "IIT", "IIM", "AIIMS", "CGO", "MIDC",
+              "DLF", "HAL", "BHEL", "ONGC", "BSF", "CRPF", "ITBP", "NSH", "PSD"}
 
 OFFICE_TYPE = {"B.O": "BO", "S.O": "SO", "H.O": "HO", "BO": "BO", "SO": "SO", "HO": "HO",
                "GPO": "HO", "G.P.O": "HO"}
@@ -83,11 +100,11 @@ def title(s):
     if not s:
         return None
     s = re.sub(r"\s+", " ", str(s)).strip()
+    if s.upper() in NULLISH:
+        return None
     s = s.replace(" AND ", " & ").replace(" and ", " & ")
-    out = []
-    for w in s.split(" "):
-        out.append(w if (len(w) <= 3 and w.isupper() and w not in ("AND",)) else w.capitalize())
-    return " ".join(out)
+    return " ".join(w if w.upper() in KEEP_UPPER else w.capitalize()
+                    for w in s.split(" "))
 
 
 def canon_state(raw):
@@ -95,6 +112,11 @@ def canon_state(raw):
         return None
     k = re.sub(r"\s+", " ", str(raw)).strip().upper()
     k = k.replace(" CIRCLE", "")
+    # the official feed publishes "THE DADRA AND NAGAR HAVELI AND DAMAN AND DIU";
+    # the article blocks the STATE_FIX lookup and leaves a 37th state behind
+    k = re.sub(r"^THE\s+", "", k)
+    if k in NULLISH:
+        return None
     return STATE_FIX.get(k) or title(k)
 
 
@@ -139,6 +161,37 @@ def _lat(v):
 
 def _lon(v):
     return _f(v, -180.0, 180.0)
+
+
+def _in_india(lat, lon):
+    return (lat is not None and lon is not None
+            and INDIA_BBOX[0] <= lat <= INDIA_BBOX[2]
+            and INDIA_BBOX[1] <= lon <= INDIA_BBOX[3])
+
+
+def fix_coords(lat, lon):
+    """Repair or discard an office coordinate. Returns (lat, lon, verdict).
+
+    The official directory carries three distinct defects, found in 2,386 of
+    165,595 offices:
+      * 780 have latitude and longitude transposed - a Telangana office at
+        (79.0, 17.0) instead of (17.0, 79.0). Recoverable: if the pair lands
+        inside India when swapped, it was swapped.
+      * 1,593 fall outside India entirely (one sits in Iran). Not recoverable.
+      * 13 are exactly (0, 0), the classic "no data" sentinel.
+    Unrecoverable values become NULL rather than being kept, because a wrong
+    coordinate is worse than a missing one: it silently places a PIN's centroid
+    in the wrong country and radius serviceability then answers confidently.
+    """
+    if lat is None or lon is None:
+        return None, None, "missing"
+    if lat == 0 and lon == 0:
+        return None, None, "null_island"
+    if _in_india(lat, lon):
+        return lat, lon, "ok"
+    if _in_india(lon, lat):
+        return lon, lat, "swapped"
+    return None, None, "dropped"
 
 
 def read_offices(jsonl, csvp):
@@ -272,16 +325,17 @@ def load_offices(db, rows, snap_id, close_missing):
     keyed, _ = dedupe(rows)
     dmap = ensure_dimensions(db, [r for _, _, r in keyed])
 
-    warn = 0
+    from collections import Counter
+    verdicts = Counter()
     for _, _, r in keyed:
-        la, lo = r["latitude"], r["longitude"]
-        if la is not None and lo is not None:
-            if not (INDIA_BBOX[0] <= la <= INDIA_BBOX[2]
-                    and INDIA_BBOX[1] <= lo <= INDIA_BBOX[3]):
-                warn += 1
-    if warn:
-        print(f"[!] {warn} office coordinate(s) fall outside India - possible "
-              f"lat/lon swap in the source", flush=True)
+        r["latitude"], r["longitude"], v = fix_coords(r["latitude"], r["longitude"])
+        verdicts[v] += 1
+    if verdicts["swapped"] or verdicts["dropped"] or verdicts["null_island"]:
+        print(f"[i] coordinates: {verdicts['ok']:,} ok, "
+              f"{verdicts['swapped']:,} lat/lon swapped and corrected, "
+              f"{verdicts['dropped']:,} outside India dropped, "
+              f"{verdicts['null_island']:,} at (0,0) dropped, "
+              f"{verdicts['missing']:,} absent", flush=True)
 
     db.executemany(
         """INSERT INTO post_office
@@ -415,27 +469,47 @@ def load_villages(db, path):
     return n
 
 
+def locality_key(name, lgd, district_id):
+    """Identity for a locality, shared with build_localities.py.
+
+    Sentinels stand in for the missing parts so the key never contains a NULL:
+    SQL treats NULLs as distinct, which is exactly how the old
+    UNIQUE(locality_name, lgd_code, district_id) failed to dedupe.
+    """
+    slug = re.sub(r"[^a-z0-9]+", "", (name or "").lower())
+    return f"{slug}|{lgd or '-'}|{district_id if district_id is not None else '-'}"
+
+
 def _load_loc(db, batch, snap):
+    """batch rows are (name, type, lgd_code, district_id, pincode)."""
     if not batch:
         return 0
-    db.executemany("INSERT INTO locality (locality_name, locality_type, lgd_code, district_id) "
-                   "VALUES (?,?,?,?) ON CONFLICT DO NOTHING",
-                   [(b[0], b[1], b[2], b[3]) for b in batch])
-    # key on (name, lgd_code, district_id) - the full uniqueness tuple. Keying on
-    # (name, lgd_code) alone mislinked villages whose lgd_code was blank.
-    lmap, keys = {}, sorted({(b[0], b[2], b[3]) for b in batch})
-    for i in range(0, len(keys), 500):
-        chunk = keys[i:i + 500]
+    keyed = [(locality_key(b[0], b[2], b[3]), b) for b in batch]
+
+    db.executemany(
+        "INSERT INTO locality (locality_key, locality_name, locality_type, lgd_code, "
+        "district_id, source_id, name_lower, fold_key, skel_key) VALUES (?,?,?,?,?,?,?,?,?) "
+        "ON CONFLICT (locality_key) DO NOTHING",
+        [(k, b[0], b[1], b[2] or "", b[3], "lgd_villages", (b[0] or "").lower(),
+          fuzzy.fold(b[0]), fuzzy.skeleton(b[0])) for k, b in keyed])
+
+    # resolve ids by locality_key - the single column identity really lives in
+    lmap, keys = {}, sorted({k for k, _ in keyed})
+    for i in range(0, len(keys), 900):
+        chunk = keys[i:i + 900]
         ph = ",".join("?" for _ in chunk)
-        for r in db.rows(
-                f"SELECT locality_id, locality_name, lgd_code, district_id FROM locality "
-                f"WHERE locality_name IN ({ph})", [c[0] for c in chunk]):
-            lmap[(r["locality_name"], r["lgd_code"] or "", r["district_id"])] = r["locality_id"]
+        for r in db.rows(f"SELECT locality_id, locality_key FROM locality "
+                         f"WHERE locality_key IN ({ph})", chunk):
+            lmap[r["locality_key"]] = r["locality_id"]
+
+    # conflict target is the partial index on OPEN links, not the primary key -
+    # valid_from is in the PK, so a fresh timestamp would never collide and the
+    # link table would double on every reload
     db.executemany(
         "INSERT INTO locality_pincode (locality_id, pincode, source_id, snapshot_id, "
-        "valid_from, valid_to) VALUES (?,?,?,?,?,NULL) ON CONFLICT DO NOTHING",
-        [(lmap[(b[0], b[2], b[3])], b[4], "lgd_villages", snap, NOW)
-         for b in batch if (b[0], b[2], b[3]) in lmap])
+        "valid_from, valid_to) VALUES (?,?,?,?,?,NULL) "
+        "ON CONFLICT (locality_id, pincode) WHERE valid_to IS NULL DO NOTHING",
+        [(lmap[k], b[4], "lgd_villages", snap, NOW) for k, b in keyed if k in lmap])
     return len(batch)
 
 

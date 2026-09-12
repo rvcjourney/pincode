@@ -140,7 +140,10 @@ CREATE TABLE IF NOT EXISTS locality (
     locality_type   TEXT,                    -- village | town | local_body | office_name
     lgd_code        TEXT NOT NULL DEFAULT '',
     district_id     INTEGER REFERENCES district(district_id),
-    source_id       TEXT REFERENCES source(source_id)
+    source_id       TEXT REFERENCES source(source_id),
+    name_lower      TEXT,                    -- indexable case-insensitive prefix
+    fold_key        TEXT,                    -- see fuzzy.fold()
+    skel_key        TEXT                     -- see fuzzy.skeleton()
 );
 -- Identity lives in locality_key, NOT in a UNIQUE over nullable columns. SQL
 -- treats NULLs as distinct, so UNIQUE(locality_name, lgd_code, district_id)
@@ -149,6 +152,13 @@ CREATE TABLE IF NOT EXISTS locality (
 -- Every loader must build the key with a sentinel for missing parts.
 CREATE UNIQUE INDEX IF NOT EXISTS ux_locality_key ON locality(locality_key);
 CREATE INDEX IF NOT EXISTS ix_locality_name ON locality(locality_name);
+-- Spelling-tolerant lookup keys, computed at load time by fuzzy.py so the same
+-- matching works on SQLite and Postgres without pg_trgm. fold_key collapses
+-- spelling variants of one sound; skel_key drops vowels, which are the least
+-- stable part of an Indian transliteration.
+CREATE INDEX IF NOT EXISTS ix_locality_lower ON locality(name_lower);
+CREATE INDEX IF NOT EXISTS ix_locality_fold ON locality(fold_key);
+CREATE INDEX IF NOT EXISTS ix_locality_skel ON locality(skel_key);
 CREATE TABLE IF NOT EXISTS locality_pincode (
     locality_id     INTEGER NOT NULL REFERENCES locality(locality_id),
     pincode         TEXT NOT NULL,

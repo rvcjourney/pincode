@@ -14,6 +14,11 @@ Notes:
 import argparse, json, os, random, sys, time, urllib.request, urllib.error
 from concurrent.futures import ThreadPoolExecutor
 
+try:                       # pick up .env the way docker-compose does
+    import ckdb           # noqa: F401  (import side effect: ckdb.load_env())
+except Exception:
+    pass
+
 SAMPLE_KEY = "579b464db66ec23bdd000001cdd3946e44ce4aad7209ff7b23ac571b"
 BASE = "https://api.data.gov.in/resource"
 
@@ -54,7 +59,9 @@ def main():
     ap.add_argument("resource_id")
     ap.add_argument("out")
     ap.add_argument("--key", default=os.environ.get("DATA_GOV_KEY", SAMPLE_KEY))
-    ap.add_argument("--workers", type=int, default=8)
+    # data.gov.in throttles hard above ~4 concurrent requests; a full pull at 8
+    # is reliably cut off partway through
+    ap.add_argument("--workers", type=int, default=3)
     a = ap.parse_args()
 
     page, total = detect_page_size(a.resource_id, a.key)

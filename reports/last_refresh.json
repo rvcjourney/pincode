@@ -1,0 +1,15 @@
+{
+ "generated_at": "2026-09-12T11:26:27+00:00",
+ "blocked": false,
+ "applied": false,
+ "snapshot": "D:\\ck_data\\pincodemodel\\raw\\postoffices_2026-09-12.jsonl",
+ "snapshot_offices": 165595,
+ "db_offices": 165595,
+ "added": 0,
+ "removed": 0,
+ "modified": 0,
+ "by_field": {},
+ "sample_added": [],
+ "sample_removed": [],
+ "report": "change_report_2026-09-12.md"
+}

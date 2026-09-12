@@ -5,10 +5,10 @@ arunachal-pradesh,Arunachal Pradesh,State
 assam,Assam,State
 bihar,Bihar,State
 chandigarh,Chandigarh,UT
-chattisgarh,Chattisgarh,State
-dadra-nagar-haveli-daman-diu,Dadra & Nagar Haveli & Daman & DIU,State
+chhattisgarh,Chhattisgarh,State
+dadra-nagar-haveli-and-daman-diu,Dadra & Nagar Haveli And Daman & Diu,UT
 delhi,Delhi,UT
-goa,GOA,State
+goa,Goa,State
 gujarat,Gujarat,State
 haryana,Haryana,State
 himachal-pradesh,Himachal Pradesh,State
@@ -16,6 +16,7 @@ jammu-kashmir,Jammu & Kashmir,UT
 jharkhand,Jharkhand,State
 karnataka,Karnataka,State
 kerala,Kerala,State
+ladakh,Ladakh,UT
 lakshadweep,Lakshadweep,UT
 madhya-pradesh,Madhya Pradesh,State
 maharashtra,Maharashtra,State
@@ -23,7 +24,6 @@ manipur,Manipur,State
 meghalaya,Meghalaya,State
 mizoram,Mizoram,State
 nagaland,Nagaland,State
-null,Null,State
 odisha,Odisha,State
 puducherry,Puducherry,UT
 punjab,Punjab,State

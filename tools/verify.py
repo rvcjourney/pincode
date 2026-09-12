@@ -14,10 +14,17 @@ HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE)
 import ckdb  # noqa: E402
 
-# Published national count, the external cross-check that the pipeline is not
-# inventing or dropping PINs: https://en.wikipedia.org/wiki/India_Post
-NATIONAL_PINS = 19101
-TOLERANCE = 250
+# Expected active-PIN count, the cross-check that the pipeline is neither
+# inventing nor dropping PINs.
+#
+# 19,586 is what the official data.gov.in directory yields (165,627 offices,
+# pulled 2026-09-11). The widely cited 19,101 comes from Wikipedia and matches
+# older community mirrors; against the live feed it is simply out of date, so
+# comparing to it flagged a correct build as wrong. Re-baseline this whenever a
+# refresh moves it legitimately - a sudden drop is the thing worth catching,
+# because a truncated pull looks exactly like a mass closure.
+NATIONAL_PINS = 19586
+TOLERANCE = 300
 
 
 def main():

@@ -384,6 +384,145 @@ def t_locality_load_is_idempotent():
 
 
 @test
+def t_fetch_resumes_until_complete():
+    """One click must finish the pull. data.gov.in throttles on both concurrency
+    and sustained volume, so a 165k-row fetch is routinely cut off partway;
+    resuming from the page ledger is what makes a single click enough.
+
+    Uses a stand-in fetcher so the test never touches the rate-limited API."""
+    import shutil
+    import refresh
+
+    fake = (
+        "import os, sys\n"
+        "TOTAL = 4\n"
+        "out = sys.argv[2]; done = out + '.done'\n"
+        "have = len(open(done).read().split()) if os.path.exists(done) else 0\n"
+        "if have >= TOTAL: sys.exit(0)\n"
+        "open(done, 'a').write(str(have * 2000) + '\\n')\n"
+        "open(out, 'a', encoding='utf-8').write('{\"page\": %d}\\n' % have)\n"
+        "sys.exit(0 if have + 1 >= TOTAL else 1)\n")
+
+    orig_here, orig_sleep = refresh.HERE, refresh.time.sleep
+    with tempfile.TemporaryDirectory() as tmp:
+        with open(os.path.join(tmp, "fetch_datagov.py"), "w", encoding="utf-8") as f:
+            f.write(fake)
+        try:
+            refresh.HERE = tmp
+            refresh.time.sleep = lambda s: None      # skip the backoff waits
+            out = os.path.join(tmp, "snap.jsonl")
+
+            ok = refresh.fetch_snapshot(out, "dummy", workers=3, budget_minutes=2)
+            assert ok is True, "gave up before the pull was complete"
+            assert refresh._pages_done(out) == 4, refresh._pages_done(out)
+            with open(out, encoding="utf-8") as f:
+                assert sum(1 for _ in f) == 4, "rows lost across resumes"
+
+            # a fetcher that never progresses must stop, not spin forever
+            with open(os.path.join(tmp, "fetch_datagov.py"), "w", encoding="utf-8") as f:
+                f.write("import sys; sys.exit(1)\n")
+            out2 = os.path.join(tmp, "stuck.jsonl")
+            assert refresh.fetch_snapshot(out2, "dummy", workers=3,
+                                          budget_minutes=2) is False
+        finally:
+            refresh.HERE, refresh.time.sleep = orig_here, orig_sleep
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+@test
+def t_fuzzy_matches_transliteration_variants():
+    """745,231 place names transliterated from Indian scripts by many hands. A
+    candidate types the spelling they know, which is often not the recorded one.
+    'Mohammadwadi' returned nothing before this - the data holds 'Mohamadwadi'
+    and 'Mahamadwadi'."""
+    import fuzzy
+
+    # doubled letters are spelling noise, not identity
+    assert fuzzy.fold("Mohammadwadi") == fuzzy.fold("Mohamadwadi")
+    # v/w are the same sound in most Indian transliterations
+    assert fuzzy.fold("Wadgaon") == fuzzy.fold("Vadgaon")
+    # 'h' after a plosive marks aspiration and is routinely dropped
+    assert fuzzy.fold("Kondhwa") == fuzzy.fold("Kondwa")
+    assert fuzzy.fold("Bhagalpur") == fuzzy.fold("Bagalpur")
+    assert fuzzy.fold("Thiruvananthapuram") == fuzzy.fold("Tiruvanantapuram")
+    # 'ch'/'sh' are distinct sounds - aspiration stripping must not touch them
+    assert fuzzy.fold("Chennai") != fuzzy.fold("Cennai")
+
+    # vowels are the least stable part; the skeleton tier catches what fold cannot
+    assert fuzzy.skeleton("Mohammadwadi") == fuzzy.skeleton("Mahamadwadi")
+    assert fuzzy.skeleton("Bengaluru") == fuzzy.skeleton("Bangalore")
+
+    # the skeleton tier over-matches on purpose, so ranking must separate it
+    assert fuzzy.skeleton("Mohan") == fuzzy.skeleton("Mahan")
+    ranked = fuzzy.rank("Mohan", [{"locality_name": n} for n in
+                                  ["Mahan", "Mohanpur", "Mohan", "Mohana"]])
+    assert ranked[0]["locality_name"] == "Mohan", [r["locality_name"] for r in ranked]
+    assert ranked[0]["match_tier"] == 0
+
+    # an exact hit must outrank a prefix hit, which must outrank a fold hit
+    ranked = fuzzy.rank("Kharadi", [{"locality_name": n} for n in
+                                    ["Kharadiwara", "Kharadi Bhagal", "Kharadi"]])
+    assert [r["locality_name"] for r in ranked][0] == "Kharadi"
+
+    assert fuzzy.fold("") == "" and fuzzy.skeleton("") == ""
+    assert fuzzy.similarity("Pune", "Pune") == 1.0
+
+
+@test
+def t_coordinate_repair():
+    """The official feed ships 2,386 bad coordinates in 165,595 offices: 780 with
+    latitude and longitude transposed, 1,593 outside India, 13 at (0,0). A wrong
+    coordinate is worse than a missing one - it puts a PIN centroid in the wrong
+    country and radius serviceability then answers with confidence."""
+    from build_db import fix_coords
+
+    # a real example from the feed: a Telangana office stored as (79.0, 17.0)
+    assert fix_coords(79.0, 17.0) == (17.0, 79.0, "swapped")
+    # correct coordinates are left alone
+    assert fix_coords(17.0, 79.0) == (17.0, 79.0, "ok")
+    assert fix_coords(28.6139, 77.2090) == (28.6139, 77.2090, "ok")
+    # unrecoverable values become NULL, never kept
+    assert fix_coords(35.8968, 61.25369) == (None, None, "dropped")
+    assert fix_coords(0.0, 0.0) == (None, None, "null_island")
+    assert fix_coords(None, 77.0) == (None, None, "missing")
+    # a swap that is still outside India is not a swap
+    assert fix_coords(200.0, 300.0)[2] == "dropped"
+
+
+@test
+def t_official_feed_state_spellings():
+    """Spellings the live data.gov.in feed actually publishes.
+
+    Each of these produced a wrong row in a real build: 'NA' became a 37th
+    state and a district of its own across 712 offices (inflating multi-state
+    PINs from 52 to 289); 'GOA' survived title()'s short-acronym rule as GOA;
+    and 'THE DADRA...' failed the STATE_FIX lookup because of the article."""
+    from build_db import canon_state, title, NULLISH
+
+    assert canon_state("GOA") == "Goa"
+    assert canon_state("THE DADRA AND NAGAR HAVELI AND DAMAN AND DIU") == \
+        "Dadra & Nagar Haveli And Daman & Diu"
+    assert canon_state("DADRA AND NAGAR HAVELI AND DAMAN AND DIU") == \
+        "Dadra & Nagar Haveli And Daman & Diu"
+
+    # placeholders are absence, not values
+    for junk in ["NA", "N/A", "N.A.", "NIL", "-", "", "  "]:
+        assert canon_state(junk) is None, f"canon_state({junk!r}) leaked a state"
+        assert title(junk) is None, f"title({junk!r}) leaked a district"
+    assert "NA" in NULLISH
+
+    # genuine acronyms must still survive
+    assert title("NCR") == "NCR"
+    # and the older fixes must not regress
+    assert canon_state("ORISSA") == "Odisha"
+    assert canon_state("TAMILNADU") == "Tamil Nadu"
+    assert canon_state("ANDHRA PRADESH CIRCLE") == "Andhra Pradesh"
+    assert canon_state("JAMMU AND KASHMIR") == "Jammu & Kashmir"
+    # real district names are untouched
+    assert title("KUMURAM BHEEM ASIFABAD") == "Kumuram Bheem Asifabad"
+
+
+@test
 def t_pg_url_with_special_password_is_diagnosed():
     """`openssl rand -base64 32` emits '/', which ends the URL authority. libpq
     then reads part of the password as the hostname and dies with 'Servname not

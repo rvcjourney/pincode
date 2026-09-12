@@ -25,6 +25,10 @@ import argparse, os, re, sys
 from datetime import datetime, timezone
 
 import ckdb
+import fuzzy
+# one definition, shared with build_db.py's village loader - two writers with
+# two different key formulas would silently create duplicate localities
+from build_db import locality_key as key_of
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 NOW = datetime.now(timezone.utc).isoformat(timespec="seconds")
@@ -50,14 +54,6 @@ def locality_name(office_name):
     return n
 
 
-def key_of(name, lgd, district_id):
-    """Identity for a locality. Sentinels stand in for the missing parts so the
-    key never contains a NULL - SQL treats NULLs as distinct, which is exactly
-    how the old UNIQUE(locality_name, lgd_code, district_id) failed to dedupe."""
-    slug = re.sub(r"[^a-z0-9]+", "", (name or "").lower())
-    return f"{slug}|{lgd or '-'}|{district_id if district_id is not None else '-'}"
-
-
 def migrate(db):
     """Bring an existing database up to the locality_key schema in place."""
     cols = db.columns("locality")
@@ -73,8 +69,27 @@ def migrate(db):
                         r["locality_id"]))
         db.execute("CREATE UNIQUE INDEX IF NOT EXISTS ux_locality_key "
                    "ON locality(locality_key)")
-    if "source_id" not in cols:
-        db.execute("ALTER TABLE locality ADD COLUMN source_id TEXT")
+    # Add any column this version expects but an older build lacks. Checked
+    # one at a time on purpose: nesting them meant name_lower was only added
+    # when fold_key was also missing, so a database midway through the upgrades
+    # never got it.
+    for col, decl in (("source_id", "TEXT"), ("name_lower", "TEXT"),
+                      ("fold_key", "TEXT"), ("skel_key", "TEXT")):
+        if col not in cols:
+            print(f"[i] migrating locality: adding {col}", flush=True)
+            db.execute(f"ALTER TABLE locality ADD COLUMN {col} {decl}")
+
+    # backfill the search keys wherever they are missing
+    todo = db.rows("""SELECT locality_id, locality_name FROM locality
+                      WHERE name_lower IS NULL OR fold_key IS NULL OR skel_key IS NULL""")
+    if todo:
+        print(f"[i] computing search keys for {len(todo):,} localities", flush=True)
+        db.executemany("UPDATE locality SET name_lower=?, fold_key=?, skel_key=? "
+                       "WHERE locality_id=?",
+                       [((r["locality_name"] or "").lower(),
+                         fuzzy.fold(r["locality_name"]),
+                         fuzzy.skeleton(r["locality_name"]),
+                         r["locality_id"]) for r in todo])
 
     # Drop duplicate OPEN links before ux_locpin_current can be created. These
     # come from reloads made while valid_from was the only thing separating
@@ -124,7 +139,8 @@ def main():
             skipped += 1
             continue
         k = key_of(name, "", o["district_id"])
-        locs[k] = (k, name, "office_name", "", o["district_id"], "datagov_directory")
+        locs[k] = (k, name, "office_name", "", o["district_id"], "datagov_directory",
+                   name.lower(), fuzzy.fold(name), fuzzy.skeleton(name))
         links.add((k, o["pincode"]))
 
     print(f"[i] {len(offices):,} offices -> {len(locs):,} distinct localities, "
@@ -145,12 +161,15 @@ def main():
 
     db.executemany(
         """INSERT INTO locality (locality_key, locality_name, locality_type, lgd_code,
-                                 district_id, source_id)
-           VALUES (?,?,?,?,?,?)
+                                 district_id, source_id, name_lower, fold_key, skel_key)
+           VALUES (?,?,?,?,?,?,?,?,?)
            ON CONFLICT (locality_key) DO UPDATE SET
              locality_name = excluded.locality_name,
              locality_type = excluded.locality_type,
-             district_id   = excluded.district_id""",
+             district_id   = excluded.district_id,
+             name_lower    = excluded.name_lower,
+             fold_key      = excluded.fold_key,
+             skel_key      = excluded.skel_key""",
         list(locs.values()))
 
     idmap = {r["locality_key"]: r["locality_id"]

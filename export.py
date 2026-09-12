@@ -5,7 +5,7 @@ Step 5: emit app-ready flat files + a QA summary from the master DB.
     python export.py                      # uses $CK_DB_URL
     python export.py --db postgresql://...
 """
-import argparse, csv, json, os
+import argparse, csv, json, os, re
 
 import ckdb
 
@@ -59,6 +59,64 @@ def r4(v):
     """Round a coordinate, preserving an exact 0.0 (a plain truthiness test
     turned a real 0.0 coordinate into null)."""
     return None if v is None else round(v, 4)
+
+
+def strip_office_suffix(name):
+    """Office name -> the place it is named after."""
+    n = re.sub(r"\s*\([^)]*\)\s*$", "", (name or "").strip())
+    return re.sub(r"\s*\b(B\.?O|S\.?O|H\.?O|G\.?P\.?O)\.?$", "", n).strip()
+
+
+def format_address(locality, taluk, district, state, pincode):
+    """Assemble an Indian postal address, collapsing components that repeat.
+
+    Taluk is often identical to the district (Pune / Pune) or to the locality;
+    printing it twice reads as a data error, so equal neighbours are dropped.
+    """
+    parts, seen = [], set()
+    for p in (locality, taluk, district, state):
+        if not p:
+            continue
+        k = p.strip().lower()
+        if k and k not in seen:
+            seen.add(k)
+            parts.append(p.strip())
+    return ", ".join(parts) + (" - " + pincode if pincode else "")
+
+
+def write_full_addresses(db, ex):
+    """One complete address line per locality.
+
+    A PIN is not one address: 853204 resolves to 34 localities across 5
+    districts and several taluks, so taluk and district differ line to line,
+    not just the locality name.
+    """
+    p = os.path.join(ex, "pincode_full_addresses.csv")
+    n = 0
+    with open(p, "w", newline="", encoding="utf-8") as f:
+        w = csv.writer(f)
+        w.writerow(["pincode", "locality", "taluk", "district", "state",
+                    "full_address", "post_office", "office_type", "deliverable",
+                    "postal_circle", "postal_division"])
+        for r in db.rows("""SELECT pincode, office_name, office_type, delivery_status,
+                                   taluk, district_raw, state_raw, circle_name,
+                                   division_name
+                            FROM post_office WHERE valid_to IS NULL
+                            ORDER BY pincode, office_name"""):
+            loc = strip_office_suffix(r["office_name"])
+            w.writerow([
+                r["pincode"], loc, r["taluk"] or "", r["district_raw"] or "",
+                r["state_raw"] or "",
+                format_address(loc, r["taluk"], r["district_raw"], r["state_raw"],
+                               r["pincode"]),
+                r["office_name"], r["office_type"] or "",
+                1 if (r["delivery_status"] or "").lower().startswith("delivery") else 0,
+                r["circle_name"] or "", r["division_name"] or "",
+            ])
+            n += 1
+    print(f"[i] {'pincode_full_addresses.csv':34s} {n:>8,} rows  "
+          f"{os.path.getsize(p)/1e6:6.2f} MB")
+    return n
 
 
 def write_locality_lookup(db, ex):
@@ -131,6 +189,7 @@ def main():
     print(f"[i] {'pincode_lookup.min.json':34s} {len(lut):>8,} keys  "
           f"{os.path.getsize(p)/1e6:6.2f} MB")
 
+    write_full_addresses(db, ex)
     write_locality_lookup(db, ex)
     write_qa(db, a.out)
     db.close()

@@ -36,6 +36,10 @@
   --bad:#EE8177; --bad-wash:#3A1A17; --good:#6FCF97; --good-wash:#12301F;
 }
 *{box-sizing:border-box}
+/* Author display rules (button,.btn{display:inline-block}) outrank the
+   browser's [hidden]{display:none}, so elements toggled with .hidden = true
+   stayed visible. This restores the attribute's meaning. */
+[hidden]{display:none!important}
 body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--sans);
      font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
 .wrap{max-width:1400px;margin:0 auto;padding:18px 18px 48px}
@@ -79,6 +83,12 @@ th{position:sticky;top:0;background:var(--surface);border-bottom:1px solid var(-
    text-align:left;padding:8px 11px;font-family:var(--mono);font-size:9.5px;
    letter-spacing:.08em;text-transform:uppercase;color:var(--faint);font-weight:600;white-space:nowrap}
 td{padding:7px 11px;border-bottom:1px solid var(--line);white-space:nowrap}
+td.areas,.areas{white-space:normal}
+.areas{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.45;margin-top:3px}
+.aline{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amore{display:block;color:var(--faint);font-size:11.5px;margin-top:2px}
+.acell{display:block;max-width:190px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12.5px;color:var(--ink-2)}
+td:has(.areas){min-width:300px;max-width:460px;vertical-align:top}
 tbody tr{cursor:pointer}
 tbody tr:hover td{background:var(--surface-2)}
 .pin{font-family:var(--mono);font-weight:600}
@@ -116,6 +126,81 @@ tbody tr:hover td{background:var(--surface-2)}
 .orow{display:flex;justify-content:space-between;gap:10px;font-size:12.5px;
       padding:4px 7px;border-radius:5px;background:var(--ground)}
 .empty{padding:34px 16px;text-align:center;color:var(--faint);font-size:13px}
+
+/* ---- skeleton loading -------------------------------------------------- */
+/* A shape the size of the real content, shimmering, reads as "arriving";
+   a bare "Loading..." reads as "nothing here". */
+.sk{display:inline-block;border-radius:5px;vertical-align:middle;
+  background:linear-gradient(90deg,var(--surface-2) 25%,var(--line) 37%,var(--surface-2) 63%);
+  background-size:400% 100%;animation:shimmer 1.3s ease-in-out infinite}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none;background:var(--surface-2)}}
+tbody tr.skrow td{padding:9px 11px}
+
+/* ---- operations layout ------------------------------------------------- */
+.opsbody{padding:4px 0 10px}
+.opsec{padding:14px 16px;border-top:1px solid var(--line)}
+.opsec:first-child{border-top:none;padding-bottom:4px}
+.opsec h3{margin:0 0 10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+.opcards{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px}
+.opcard{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--ground)}
+.opfoot{display:flex;align-items:center;gap:8px;margin-top:9px}
+.opage{margin-left:auto;font-family:var(--mono);font-size:11.5px;color:var(--faint);
+  font-variant-numeric:tabular-nums}
+.joblog{margin:12px 0 0;max-height:260px;overflow:auto;background:var(--ground);
+  border:1px solid var(--line);border-radius:8px;padding:10px;
+  font-family:var(--mono);font-size:11.5px;white-space:pre-wrap;color:var(--ink-2)}
+.joblog:empty{display:none}
+.dlbody{padding:4px 0 8px}
+.dlgroup{padding:14px 16px 4px;border-top:1px solid var(--line)}
+.dlgroup:first-child{border-top:none}
+.dlgroup h3{margin:0 0 10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--accent);font-weight:600}
+.dlrow{display:flex;align-items:flex-start;gap:16px;padding:11px 0;border-top:1px solid var(--line)}
+.dlgroup h3 + .dlrow{border-top:none}
+.dlmeta{flex:1;min-width:0}
+.dltitle{font-size:14px;font-weight:600;margin-bottom:2px}
+.dldesc{font-size:13px;color:var(--muted);line-height:1.5;max-width:72ch}
+.dlfile{margin-top:4px;font-size:11.5px;color:var(--faint)}
+.dlfile code{font-family:var(--mono);background:var(--surface-2);padding:1px 5px;border-radius:4px}
+.dlrows{margin-left:6px;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.oprow{display:flex;align-items:flex-start;gap:14px;padding:7px 0;border-top:1px solid var(--line)}
+.oprow:first-child{border-top:none}
+.opname{font-size:13px;font-weight:500}
+.opsub{font-size:12px;color:var(--muted);margin-top:1px;line-height:1.45}
+.opval{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--ink-2);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
+.alert{border-left:3px solid var(--warn);background:var(--warn-wash);border-radius:0 8px 8px 0;
+  padding:11px 14px;font-size:13px;color:var(--ink-2);line-height:1.55}
+.alert.ok{border-left-color:var(--accent);background:var(--accent-wash)}
+.alert strong{color:var(--warn)}
+.alert.ok strong{color:var(--accent-ink)}
+.alert code{font-family:var(--mono);font-size:11.5px;background:var(--surface);
+  padding:1px 5px;border-radius:4px}
+.taskpanel{display:block}
+.taskmain{font-size:14px!important;font-weight:600;padding:10px 18px!important;
+  background:var(--accent)!important;color:#fff!important;border-color:var(--accent)!important}
+.taskmain:hover{filter:brightness(1.08);color:#fff!important}
+.taskdesc{font-size:12.5px;color:var(--muted);margin:7px 0 14px;max-width:70ch;line-height:1.5}
+.tasksec{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px}
+.taskmore{border-top:1px solid var(--line);padding-top:10px;margin-top:4px;max-width:70ch}
+.taskmore summary{cursor:pointer;font-size:12.5px;color:var(--muted);
+  font-family:var(--mono);letter-spacing:.03em}
+.taskmore summary:hover{color:var(--accent)}
+.taskrow{display:flex;align-items:center;gap:14px;padding:9px 0;border-top:1px solid var(--line)}
+.taskrow:first-of-type{border-top:none;margin-top:6px}
+.taskrow button{margin-left:auto;flex:none}
+.pvgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:1px;
+  background:var(--line);border:1px solid var(--line);border-radius:9px;
+  overflow:hidden;margin-top:10px;max-width:70ch}
+.pvcell{background:var(--surface);padding:9px 12px}
+.pvcell .k{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--faint)}
+.pvcell .v{display:block;font-family:var(--mono);font-size:20px;font-weight:600;
+  font-variant-numeric:tabular-nums}
+#preview{max-width:74ch}
+.dlbtn{flex:none;align-self:center}
 .dl{display:flex;flex-wrap:wrap;gap:7px}
 footer{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);
        font-size:12px;color:var(--muted);max-width:60ch;line-height:1.5}
@@ -129,7 +214,7 @@ footer a{color:var(--accent)}
     <div>
       <div class="eyebrow">CK PIN Code Master</div>
       <h1>PIN Code Console</h1>
-      <div class="sub">Live from the master database &mdash; search, inspect and download.</div>
+      <div class="sub">Live from the master database. Search by PIN, area, office or district &mdash; one PIN covers many areas.</div>
     </div>
     <div class="right">
       <a class="btn" href="/api/docs" target="_blank" rel="noopener">API docs</a>
@@ -141,8 +226,6 @@ footer a{color:var(--accent)}
 
   <div class="tabs">
     <button class="on" data-tab="pincodes" type="button">PIN codes</button>
-    <button data-tab="offices" type="button">Post offices</button>
-    <button data-tab="localities" type="button">Place names</button>
     <button data-tab="downloads" type="button">Downloads</button>
     <button data-tab="ops" type="button">Operations</button>
   </div>
@@ -153,6 +236,7 @@ footer a{color:var(--accent)}
     <div class="phd">
       <span class="count" id="count">Loading&hellip;</span>
       <span class="pager">
+        <a class="btn" id="dl" href="#" download>&darr; Download CSV</a>
         <button id="prev" type="button">&larr; Prev</button>
         <button id="next" type="button">Next &rarr;</button>
       </span>
@@ -182,15 +266,35 @@ var esc = function(s){
 };
 var $ = function(id){ return document.getElementById(id); };
 
+var AREA_COLS = "auto";   // "auto" = fit the rows on screen, or a fixed number
+
+var AREA_HARD_CAP = 60;   // 834001 alone covers 1,016 areas
+
+function areaColCount(rows){
+  // Dynamic: exactly as many "Area N" columns as the rows on screen actually
+  // use - no empty columns, nothing truncated - bounded so that one very wide
+  // PIN cannot blow the table out to four figures.
+  if (AREA_COLS !== "auto") return parseInt(AREA_COLS, 10);
+  var m = 0;
+  (rows || []).forEach(function(r){ m = Math.max(m, (r.localities || []).length); });
+  return Math.max(1, Math.min(m, AREA_HARD_CAP));
+}
+
+function pincodeCols(n){
+  var c = [["PIN","pincode","pin"]];
+  for (var i = 0; i < n; i++) c.push(["Area " + (i+1), "__area" + i, "area"]);
+  c.push(["District","primary_district",""], ["State / UT","primary_state",""],
+         ["Areas","n_localities","num"], ["Offices","n_offices","num"],
+         ["Status","status","status"]);
+  return c;
+}
 var TABS = {
   pincodes: {
     url: "/api/pincodes",
-    cols: [["PIN","pincode","pin"],["Primary office","primary_office",""],
-           ["District","primary_district",""],["State / UT","primary_state",""],
-           ["Offices","n_offices","num"],["Districts","n_districts","ndist"],
-           ["Area km²","area_sqkm","num"],["Status","status","status"]],
+    // columns are built per render: PIN | Area 1 | Area 2 | ... | District | State
+    dynamic: true,
     filters: ["q","state","district","multi","deliverable"],
-    ph: "PIN, office or district"
+    ph: "PIN, area, office or district"
   },
   offices: {
     url: "/api/offices",
@@ -244,6 +348,13 @@ function buildBar(){
            return '<option value="' + x + '"' + (S.office_type === x ? " selected" : "") + '>' + x + '</option>';
          }).join("") + '</select>';
   }
+  if (t.dynamic){
+    h += '<label class="chk">Area columns&nbsp;<select id="areacols" style="min-width:70px">' +
+         ["auto",5,10,15,20,30].map(function(n){
+           return '<option value="' + n + '"' + (String(AREA_COLS) === String(n) ? " selected" : "") +
+                  '>' + (n === "auto" ? "Auto" : n) + '</option>';
+         }).join("") + '</select></label>';
+  }
   if (t.filters.indexOf("multi") >= 0)
     h += '<label class="chk"><input type="checkbox" id="multi"' + (S.multi?" checked":"") + '> Spans &gt;1 district</label>';
   if (t.filters.indexOf("deliverable") >= 0)
@@ -269,6 +380,10 @@ function buildBar(){
       S[id] = e.target.checked; S.offset = 0; load();
     });
   });
+  if ($("areacols")) $("areacols").addEventListener("change", function(e){
+    AREA_COLS = e.target.value === "auto" ? "auto" : parseInt(e.target.value, 10);
+    load();
+  });
   if ($("state")) fillDistricts();
 }
 
@@ -288,6 +403,7 @@ function fillDistricts(){
 
 function cell(r, col){
   var v = r[col[1]];
+  // note: 'area' cells read r.localities directly, not v
   switch (col[2]){
     case "pin": return '<span class="pin">' + esc(v) + '</span>';
     case "num": return v === null || v === undefined ? '<span class="dim">—</span>' : num(v);
@@ -300,6 +416,31 @@ function cell(r, col){
     case "type": return v ? esc(v) : '<span class="pill mute">unknown</span>';
     case "deliv": return /^delivery/i.test(v || "") ? '<span class="pill good">delivery</span>'
                                                     : '<span class="pill mute">' + esc(v || "—") + '</span>';
+    case "area": {
+      var idx = parseInt(col[1].slice(6), 10);
+      var list = r.localities || [];
+      if (idx >= list.length) return '';
+      // the area name only - district and state are their own columns, and
+      // repeating them in all 42 cells is noise, not information
+      return '<span class="acell">' + esc(list[idx].name) + '</span>';
+    }
+    case "areas": {
+      // A PIN is not one area. Each area gets its own line with its own full
+      // address - district and state can genuinely differ between areas of the
+      // same PIN. Capped at SHOW_AREAS lines; the row detail lists them all.
+      // (One column per area is not viable: PIN 834001 has 1,016 of them.)
+      var a = v || [];
+      if (!a.length) return '<span class="dim">—</span>';
+      var head = '<span class="pill ' + (a.length > 1 ? "warn" : "mute") + '">'
+               + a.length + '</span>';
+      var lines = a.slice(0, SHOW_AREAS).map(function(x){
+        return '<span class="aline">' + esc(x.full || x.name) + '</span>';
+      }).join("");
+      var extra = a.length - SHOW_AREAS;
+      return head + '<span class="areas">' + lines
+           + (extra > 0 ? '<span class="amore">+' + extra + ' more — open the row</span>' : "")
+           + '</span>';
+    }
     case "src": return '<span class="pill ' + (v === "osm_overpass" ? "warn" : "mute") + '">' + esc(v) + '</span>';
   }
   return v === null || v === undefined || v === "" ? '<span class="dim">—</span>' : esc(v);
@@ -311,51 +452,121 @@ try { TOKEN = sessionStorage.getItem("ck_admin_token") || ""; } catch(e){ TOKEN 
 
 function hdr(){ return TOKEN ? {"X-CK-Token": TOKEN} : {}; }
 
+// Placeholder blocks shown while a fetch is in flight. A shimmering shape the
+// size of the real content reads as "arriving" where a bare "Loading..." reads
+// as "nothing here".
+function skel(w, h){
+  return '<span class="sk" style="width:' + w + ';height:' + (h || 13) + 'px"></span>';
+}
+
+function opsSkeleton(){
+  var srcRows = "", chkRows = "";
+  for (var i = 0; i < 3; i++){
+    srcRows += '<div class="opcard">' + skel("62%", 14)
+             + '<div style="margin-top:7px">' + skel("42%", 11) + "</div>"
+             + '<div style="margin-top:9px">' + skel("34%", 18) + "</div></div>";
+  }
+  for (var j = 0; j < 5; j++){
+    chkRows += '<div class="oprow">' + skel((54 + j * 5) + "%")
+             + '<span class="opval">' + skel("46px", 16) + "</span></div>";
+  }
+  return '<div class="dhd"><strong>Pipeline</strong></div>'
+    + '<div class="opsbody">'
+    +   '<section class="opsec">' + skel("78%", 42) + "</section>"
+    +   '<section class="opsec"><h3>Update the data</h3>'
+    +     skel("190px", 38) + '<div style="margin-top:9px">' + skel("86%", 12) + "</div>"
+    +     '<div style="margin-top:5px">' + skel("70%", 12) + "</div></section>"
+    +   '<section class="opsec"><h3>Data sources</h3>'
+    +     '<div class="opcards">' + srcRows + "</div></section>"
+    +   '<section class="opsec"><h3>Health checks</h3>' + chkRows + "</section>"
+    + "</div>";
+}
+
 function renderOps(){
   $("hrow").innerHTML = ""; $("tbody").innerHTML = ""; $("empty").hidden = true;
+  $("prev").hidden = true; $("next").hidden = true;
   $("count").innerHTML = "<b>Pipeline</b> &middot; status and controls";
+  $("detail").innerHTML = opsSkeleton();
+
   fetch("/api/pipeline/status").then(function(r){ return r.json(); }).then(function(st){
-    var snaps = (st.snapshots || []).map(function(s){
-      return '<div class="kv"><dt>' + esc(s.source_id) + "</dt><dd class=\"n\">" +
-             esc((s.last_fetched || "").replace("T", " ").replace("+00:00", " UTC")) +
-             "</dd></div>";
-    }).join("") || '<div class="dim">no snapshots yet</div>';
-
-    var recent = (st.recent || []).slice(0, 12).map(function(c){
-      return '<div class="orow"><span>' + esc(c.entity_key) +
-        ' <span class="pill ' + (c.change_type === "removed" ? "bad" :
-           c.change_type === "added" ? "good" : "mute") + '">' + esc(c.change_type) +
-        "</span></span><span class=\"dim\">" + esc(c.field || "") + "</span></div>";
-    }).join("") || '<div class="dim">no changes recorded yet</div>';
-
-    var ctrl;
-    if (!st.admin_enabled){
-      ctrl = '<div class="spanbox"><p><b>Controls are disabled.</b> ' +
-        'Set <code>CK_ADMIN_TOKEN</code> in <code>.env</code> and restart the ' +
-        'web service to run the pipeline from here. Without it these endpoints ' +
-        'do not exist at all.</p></div>';
+    // ---- 1. what should I do? ----------------------------------------------
+    var due = st.next_refresh_in_days, banner;
+    if (due === null || due === undefined){
+      banner = '<div class="alert"><strong>No official pull yet.</strong> Fetch the '
+             + "data to start recording changes.</div>";
+    } else if (due > 0){
+      banner = '<div class="alert ok"><strong>Up to date.</strong> Next refresh due in '
+             + due + " day" + (due === 1 ? "" : "s") + ". The directory is published "
+             + "monthly, so running it more often adds nothing.</div>";
     } else {
-      ctrl = '<div class="bar" style="margin:0 0 10px">' +
-        '<input type="search" id="tok" placeholder="admin token" value="' + esc(TOKEN) + '">' +
-        '<button id="savetok" type="button">Use token</button></div>' +
-        '<div class="dl" id="taskbtns"><span class="dim">enter the token to load tasks</span></div>' +
-        '<pre id="joblog" style="margin:12px 0 0;max-height:260px;overflow:auto;' +
-        'background:var(--ground);border:1px solid var(--line);border-radius:8px;' +
-        'padding:10px;font-family:var(--mono);font-size:11.5px;white-space:pre-wrap"></pre>';
+      banner = '<div class="alert"><strong>Refresh due.</strong> The last pull is '
+             + Math.abs(due) + " day" + (Math.abs(due) === 1 ? "" : "s")
+             + " past the monthly cycle.</div>";
+    }
+
+    // ---- 2. sources, as cards rather than a cramped list -------------------
+    var cards = (st.sources || []).map(function(s){
+      var pill = s.state === "stale" ? '<span class="pill bad">stale</span>'
+               : s.state === "due"   ? '<span class="pill warn">due</span>'
+               :                       '<span class="pill good">current</span>';
+      var age = s.age_days === null ? "unknown"
+              : s.age_days === 0 ? "today"
+              : s.age_days + "d ago";
+      return '<div class="opcard"><div class="opname">' + esc(s.label) + "</div>"
+           + '<div class="opsub">' + esc(s.feeds) + "</div>"
+           + '<div class="opfoot">' + pill + '<span class="opage">' + age + "</span></div></div>";
+    }).join("") || '<div class="opsub">nothing loaded yet</div>';
+
+    // ---- 3. health, full width so labels are not wrapped -------------------
+    var chk = (st.checks || []).map(function(c){
+      var p = c.state === "pass" ? '<span class="pill good">pass</span>'
+            : c.state === "warn" ? '<span class="pill warn">' + num(c.value) + "</span>"
+            :                      '<span class="pill bad">' + num(c.value) + "</span>";
+      return '<div class="oprow"><span class="opname">' + esc(c.label) + "</span>"
+           + '<span class="opval">' + p + "</span></div>";
+    }).join("");
+
+    var changes = st.changes
+      ? '<div class="oprow"><span class="opname">Changes recorded</span>'
+        + '<span class="opval">' + num(st.changes) + " since "
+        + esc(String(st.last_change || "").slice(0, 10)) + "</span></div>"
+      : '<div class="opsub" style="margin-top:8px">No changes recorded yet &mdash; the '
+        + "log fills the first time you fetch data.</div>";
+
+    // ---- 4. controls --------------------------------------------------------
+    var LOG = '<pre id="joblog" class="joblog"></pre>';
+    var ctrl;
+    if (st.local_trusted){
+      ctrl = '<div class="taskpanel" id="taskbtns">' + skel("170px", 34) + "</div>" + LOG;
+    } else if (!st.admin_enabled){
+      ctrl = '<div class="alert"><strong>Controls are off.</strong> Add '
+           + "<code>CK_ADMIN_TOKEN=&lt;a long random string&gt;</code> to <code>.env</code> "
+           + "and restart to run the pipeline from here. Until then these endpoints do not "
+           + "exist at all, so nobody who finds this page can start a job. Everything here "
+           + "also runs on the server with <code>python refresh.py --dry-run</code>.</div>";
+    } else {
+      ctrl = '<div class="bar" style="margin:0 0 10px">'
+           + '<input type="search" id="tok" placeholder="admin token" value="' + esc(TOKEN) + '">'
+           + '<button id="savetok" type="button">Unlock</button></div>'
+           + '<div class="taskpanel" id="taskbtns"><span class="opsub">enter the token '
+           + "to load tasks</span></div>" + LOG;
     }
 
     $("detail").innerHTML =
-      '<div class="dhd"><strong>Pipeline</strong>' +
-      (st.running_job ? ' <span class="pill warn">job ' + st.running_job + ' running</span>' : "") +
-      "</div><div class=\"dbody\">" +
-      '<div class="dsec"><h3>Last loaded</h3><dl style="margin:0">' + snaps +
-        '<div class="kv"><dt>change_log rows</dt><dd class="n">' + num(st.changes) + "</dd></div>" +
-        "</dl></div>" +
-      '<div class="dsec"><h3>Recent changes</h3><div class="olist">' + recent + "</div></div>" +
-      '<div class="dsec" style="grid-column:1/-1"><h3>Run a task</h3>' + ctrl + "</div>" +
-      "</div>";
+      '<div class="dhd"><strong>Pipeline</strong>'
+      + (st.running_job ? ' <span class="pill warn">job ' + st.running_job + " running</span>" : "")
+      + "</div>"
+      + '<div class="opsbody">'
+      +   '<section class="opsec">' + banner + "</section>"
+      +   '<section class="opsec"><h3>Update the data</h3>' + ctrl + "</section>"
+      +   '<section class="opsec"><h3>Data sources</h3>'
+      +     '<div class="opcards">' + cards + "</div></section>"
+      +   '<section class="opsec"><h3>Health checks</h3>' + chk + changes + "</section>"
+      + "</div>";
 
-    if (st.admin_enabled){
+    if (st.local_trusted){
+      loadTasks();
+    } else if (st.admin_enabled){
       $("savetok").addEventListener("click", function(){
         TOKEN = $("tok").value.trim();
         try { sessionStorage.setItem("ck_admin_token", TOKEN); } catch(e){}
@@ -363,6 +574,9 @@ function renderOps(){
       });
       if (TOKEN) loadTasks();
     }
+  }).catch(function(e){
+    $("detail").innerHTML = '<div class="empty">Could not load pipeline status: '
+                          + esc(e.message) + "</div>";
   });
 }
 
@@ -372,14 +586,38 @@ function loadTasks(){
     if (!r.ok) throw new Error("HTTP " + r.status);
     return r.json();
   }).then(function(d){
-    $("taskbtns").innerHTML = d.tasks.map(function(t){
-      return '<button type="button" data-task="' + t.name + '" data-writes="' +
-        (t.writes ? "1" : "") + '">' + esc(t.label) +
-        (t.writes ? ' <span class="pill warn">writes</span>' : "") + "</button>";
+    var primary = d.tasks.filter(function(t){ return t.rank === 1; });
+    var second  = d.tasks.filter(function(t){ return t.rank === 2; });
+    var more    = d.tasks.filter(function(t){ return t.rank === 3; });
+
+    var html = primary.map(function(t){
+      return '<button class="taskmain" type="button" data-task="' + t.name + '" data-writes="'
+           + (t.writes ? "1" : "") + '">↻ ' + esc(t.label) + "</button>"
+           + '<div class="taskdesc">' + esc(t.desc) + "</div>";
     }).join("");
+
+    html += '<div class="tasksec">' + second.map(function(t){
+      return '<button type="button" data-task="' + t.name + '" data-writes="'
+           + (t.writes ? "1" : "") + '" title="' + esc(t.desc) + '">'
+           + esc(t.label) + "</button>";
+    }).join("") + "</div>";
+
+    if (more.length){
+      html += '<details class="taskmore"><summary>Maintenance tasks</summary>'
+           +  more.map(function(t){
+                return '<div class="taskrow"><div><div class="opname">' + esc(t.label)
+                     + "</div><div class=\"opsub\">" + esc(t.desc) + "</div></div>"
+                     + '<button type="button" data-task="' + t.name + '" data-writes="'
+                     + (t.writes ? "1" : "") + '">Run</button></div>';
+              }).join("")
+           + "</details>";
+    }
+
+    $("taskbtns").innerHTML = html;
     $("taskbtns").querySelectorAll("button[data-task]").forEach(function(b){
-      b.addEventListener("click", function(){ runTask(b.getAttribute("data-task"),
-                                                      !!b.getAttribute("data-writes")); });
+      b.addEventListener("click", function(){
+        runTask(b.getAttribute("data-task"), !!b.getAttribute("data-writes"));
+      });
     });
   }).catch(function(e){
     $("taskbtns").innerHTML = '<span class="pill bad">' + esc(e.message) + "</span>";
@@ -387,19 +625,105 @@ function loadTasks(){
 }
 
 function runTask(name, writes){
-  if (writes && !confirm("'" + name + "' modifies the master database.\n\nContinue?")) return;
+  // "Fetch latest data" previews first. A confirmation that only says "this
+  // modifies the database" tells you nothing you can act on; showing the actual
+  // delta does. The apply then reuses the previewed snapshot, so what was
+  // approved is exactly what gets written.
+  if (name === "refresh") return startPreview();
+  if (writes && !confirm("'" + name + "' modifies the master database. Continue?")) return;
+  start(name, writes);
+}
+
+function startPreview(){
+  var log = $("joblog");
+  log.textContent = "Downloading the latest snapshot and comparing it with the "
+                  + "master. Nothing is written yet…\n";
+  $("preview") && ($("preview").innerHTML = "");
+  fetch("/api/admin/run/refresh_dry", {method: "POST", headers: hdr()})
+    .then(function(r){ return r.json().then(function(j){
+      if (!r.ok) throw new Error(j.detail || ("HTTP " + r.status)); return j; }); })
+    .then(function(j){ poll(j.job, showPreview); })
+    .catch(function(e){ log.textContent += "[!] " + e.message + "\n"; });
+}
+
+function showPreview(){
+  fetch("/api/pipeline/preview").then(function(r){ return r.json(); }).then(function(p){
+    if (!p.available){ return; }
+    var host = $("preview");
+    if (!host){
+      host = document.createElement("div");
+      host.id = "preview";
+      $("joblog").parentNode.insertBefore(host, $("joblog"));
+    }
+    if (p.blocked){
+      host.innerHTML = '<div class="alert"><strong>Blocked by the safety check.</strong> '
+        + 'This snapshot would close ' + num(p.removed) + ' of ' + num(p.db_offices)
+        + ' offices (over 2%). A truncated download looks exactly like mass closures, '
+        + 'so nothing was applied. Re-run the preview before forcing it.</div>';
+      return;
+    }
+    if (!p.added && !p.removed && !p.modified){
+      host.innerHTML = '<div class="alert ok"><strong>Nothing to apply.</strong> '
+        + 'The government snapshot (' + num(p.snapshot_offices)
+        + ' offices) matches the master exactly — no additions, closures or '
+        + 'field changes.</div>';
+      return;
+    }
+    var fields = Object.keys(p.by_field || {}).map(function(f){
+      return '<li>' + esc(f) + " <span class=\"dim\">" + num(p.by_field[f]) + "</span></li>";
+    }).join("");
+    var samp = function(list, label){
+      if (!list || !list.length) return "";
+      return '<div class="opsub" style="margin-top:6px"><b>' + label + ":</b> "
+        + list.slice(0, 5).map(function(x){
+            return esc(x.pincode) + " " + esc(x.name); }).join("; ")
+        + (list.length > 5 ? " …" : "") + "</div>";
+    };
+    host.innerHTML =
+      '<div class="alert"><strong>Review before applying.</strong> '
+      + 'This snapshot has ' + num(p.snapshot_offices) + ' offices against '
+      + num(p.db_offices) + ' in the master.</div>'
+      + '<div class="pvgrid">'
+      +   '<div class="pvcell"><span class="k">New offices</span><span class="v">'
+      +     num(p.added) + "</span></div>"
+      +   '<div class="pvcell"><span class="k">Closing</span><span class="v">'
+      +     num(p.removed) + "</span></div>"
+      +   '<div class="pvcell"><span class="k">Field changes</span><span class="v">'
+      +     num(p.modified) + "</span></div>"
+      + "</div>"
+      + (fields ? '<div class="opsub" style="margin-top:8px">Changed fields: '
+                  + '<ul class="chips">' + fields + "</ul></div>" : "")
+      + samp(p.sample_added, "Examples of new offices")
+      + samp(p.sample_removed, "Examples of closures")
+      + '<div class="opsub" style="margin-top:8px">Closures are recorded with a '
+      + 'closing date, never deleted — an address captured earlier still resolves.</div>'
+      + '<div class="tasksec" style="margin-top:12px">'
+      +   '<button class="taskmain" id="doapply" type="button">Apply these '
+      +     num(p.added + p.removed + p.modified) + " changes</button>"
+      +   '<button id="cancelapply" type="button">Cancel</button>'
+      + "</div>";
+    $("doapply").addEventListener("click", function(){
+      host.innerHTML = '<div class="alert ok">Applying the reviewed snapshot…</div>';
+      start("refresh_apply", true);
+    });
+    $("cancelapply").addEventListener("click", function(){
+      host.innerHTML = '<div class="opsub">Cancelled. Nothing was written.</div>';
+    });
+  });
+}
+
+function start(name, writes){
   var log = $("joblog");
   log.textContent = "starting " + name + "…\n";
   fetch("/api/admin/run/" + name + (writes ? "?confirm=true" : ""),
         {method: "POST", headers: hdr()})
     .then(function(r){ return r.json().then(function(j){
-      if (!r.ok) throw new Error(j.detail || ("HTTP " + r.status));
-      return j; }); })
+      if (!r.ok) throw new Error(j.detail || ("HTTP " + r.status)); return j; }); })
     .then(function(j){ poll(j.job); })
     .catch(function(e){ log.textContent += "[!] " + e.message + "\n"; });
 }
 
-function poll(id){
+function poll(id, onDone){
   var log = $("joblog");
   fetch("/api/admin/job/" + id, {headers: hdr()})
     .then(function(r){ return r.json(); })
@@ -412,16 +736,65 @@ function poll(id){
     .catch(function(e){ log.textContent += "\n[!] " + e.message; });
 }
 
+function downloadUrl(){
+  if (S.tab === "pincodes"){
+    // Auto on screen means "fit this page"; auto in the export means "fit every
+    // PIN in the file". Sending the page's width would truncate wider PINs.
+    var c = (AREA_COLS === "auto") ? "auto" : AREA_COLS;
+    return "/api/download/pincode_areas_wide.csv?cols=" + c;
+  }
+  if (S.tab === "offices")    return "/api/download/post_offices.csv";
+  if (S.tab === "localities") return "/api/download/pincode_locality_map.csv";
+  return null;
+}
+
+function syncDownload(){
+  var a = $("dl");
+  if (!a) return;
+  var u = downloadUrl();
+  a.hidden = !u;
+  if (u) a.href = u;
+}
+
 function load(){
+  syncDownload();
   if (S.tab === "ops") return renderOps();
   if (S.tab === "downloads") return renderDownloads();
   var t = TABS[S.tab];
-  $("hrow").innerHTML = t.cols.map(function(c){ return "<th>" + c[0] + "</th>"; }).join("");
-  $("count").textContent = "Loading…";
+  if (!t.dynamic){
+    $("hrow").innerHTML = t.cols.map(function(c){ return "<th>" + c[0] + "</th>"; }).join("");
+  }
+  $("count").innerHTML = skel("180px", 13);
+  // skeleton rows sized to the current column count, so the table does not
+  // collapse to nothing and then jump back open when the data lands
+  var ncol = (t.dynamic ? (S.areaN || 6) + 5 : t.cols.length);
+  var srow = "";
+  for (var si = 0; si < 12; si++){
+    var cells = "";
+    for (var sc = 0; sc < ncol; sc++){
+      cells += "<td>" + skel((sc === 0 ? 54 : 70 + (sc * 7) % 26) + "%") + "</td>";
+    }
+    srow += '<tr class="skrow">' + cells + "</tr>";
+  }
+  $("tbody").innerHTML = srow;
+  $("empty").hidden = true;
+
   fetch(qs()).then(function(r){ return r.json(); }).then(function(d){
     S.total = d.total;
+    if (t.dynamic){
+      S.areaN = areaColCount(d.rows);
+      t.cols = pincodeCols(S.areaN);
+      $("hrow").innerHTML = t.cols.map(function(c){ return "<th>" + c[0] + "</th>"; }).join("");
+    }
+    var note = "";
+    if (t.dynamic && S.areaN){
+      var widest = 0;
+      (d.rows || []).forEach(function(r){ widest = Math.max(widest, r.n_localities || 0); });
+      note = " &middot; " + S.areaN + " area column" + (S.areaN === 1 ? "" : "s")
+           + (widest > S.areaN ? ' <span class="dim">(widest PIN here has ' + widest + ")</span>" : "");
+    }
     $("count").innerHTML = "<b>" + num(d.total) + "</b> rows &middot; showing " +
-      num(Math.min(d.offset + 1, d.total)) + "–" + num(Math.min(d.offset + d.limit, d.total));
+      num(Math.min(d.offset + 1, d.total)) + "–" + num(Math.min(d.offset + d.limit, d.total)) + note;
     $("empty").hidden = d.rows.length > 0;
     $("tbody").innerHTML = d.rows.map(function(r){
       return '<tr data-pin="' + esc(r.pincode) + '">' +
@@ -433,20 +806,63 @@ function load(){
   }).catch(function(e){ $("count").textContent = "Error: " + e; });
 }
 
+function dlSkeleton(){
+  // mirrors the real catalogue: four groups, a few rows each, so the panel does
+  // not sit on the previous tab's content while the counts are queried
+  var groups = [4, 6, 2, 2], html = "";
+  groups.forEach(function(n, gi){
+    html += '<div class="dlgroup"><h3>' + skel(gi % 2 ? "150px" : "120px", 10) + "</h3>";
+    for (var i = 0; i < n; i++){
+      html += '<div class="dlrow"><div class="dlmeta">'
+           +    skel((44 + (i * 9) % 26) + "%", 14)
+           +    '<div style="margin-top:6px">' + skel((72 + (i * 5) % 20) + "%", 12) + "</div>"
+           +    '<div style="margin-top:6px">' + skel("34%", 11) + "</div>"
+           +  "</div>" + skel("96px", 30) + "</div>";
+    }
+    html += "</div>";
+  });
+  return '<div class="dhd"><strong>Available exports</strong></div>'
+       + '<div class="dlbody">' + html + "</div>";
+}
+
 function renderDownloads(){
   $("hrow").innerHTML = "";
   $("tbody").innerHTML = "";
   $("empty").hidden = true;
-  $("count").innerHTML = "<b>CSV downloads</b> &middot; streamed live from the database";
-  fetch("/api/downloads").then(function(r){ return r.json(); }).then(function(names){
+  $("prev").hidden = true; $("next").hidden = true;
+  $("count").innerHTML = skel("260px", 13);
+  $("detail").innerHTML = dlSkeleton();
+  fetch("/api/downloads").then(function(r){ return r.json(); }).then(function(groups){
+    $("count").innerHTML = "<b>CSV downloads</b> &middot; generated on request "
+                         + "from the live database";
+    var html = "";
+    groups.forEach(function(g){
+      html += '<div class="dlgroup"><h3>' + esc(g.group) + "</h3>";
+      g.items.forEach(function(it){
+        var rows = it.rows === null || it.rows === undefined
+          ? "" : '<span class="dlrows">' + num(it.rows) + " rows</span>";
+        var empty = it.rows === 0 ? ' <span class="pill mute">empty</span>' : "";
+        html += '<div class="dlrow">'
+             +   '<div class="dlmeta">'
+             +     '<div class="dltitle">' + esc(it.title) + empty + "</div>"
+             +     '<div class="dldesc">' + esc(it.description) + "</div>"
+             +     '<div class="dlfile"><code>' + esc(it.name) + ".csv</code> " + rows + "</div>"
+             +   "</div>"
+             +   '<a class="btn dlbtn" href="/api/download/' + esc(it.name)
+             +     '.csv?cols=auto" download>&darr; Download</a>'
+             + "</div>";
+      });
+      html += "</div>";
+    });
     $("detail").innerHTML =
-      '<div class="dhd"><strong>Available exports</strong></div><div class="dbody"><div class="dsec">' +
-      '<div class="dl">' + names.map(function(n){
-        return '<a class="btn" href="/api/download/' + n + '.csv" download>' + n + '.csv</a>';
-      }).join("") + '</div>' +
-      '<p class="sub" style="margin-top:12px">Generated on request from the live master, ' +
-      'so they always match what the API returns. <code>post_offices.csv</code> is ~26 MB.</p>' +
-      "</div></div>";
+      '<div class="dhd"><strong>Available exports</strong>'
+      + '<span class="sub" style="margin-left:auto">Government Open Data Licence '
+      + '&ndash; India. Attribution required.</span></div>'
+      + '<div class="dlbody">' + html + "</div>";
+  }).catch(function(e){
+    $("count").innerHTML = "<b>CSV downloads</b>";
+    $("detail").innerHTML = '<div class="empty">Could not load the export list: '
+                          + esc(e.message) + "</div>";
   });
 }
 
@@ -544,11 +960,15 @@ $("theme").addEventListener("click", function(){
   document.documentElement.setAttribute("data-theme", dark ? "light" : "dark");
 });
 
+
+
 fetch("/api/stats").then(function(r){ return r.json(); }).then(function(s){
+  // Four figures a reader can act on. Place-name and polygon totals are build
+  // metrics, not decisions, and "Change log 0" reads as a failure when it only
+  // means no refresh has run yet - so it appears once it is non-zero.
   var tiles = [["PIN codes", s.pincodes, ""], ["Active", s.active, ""],
-    ["Deliverable", s.deliverable, ""], ["Post offices", s.offices, ""],
-    ["Place names", s.localities, ""], ["Spans >1 district", s.multi_district, "warn"],
-    ["With polygon", s.with_polygon, ""], ["Change log", s.changes, ""]];
+    ["Post offices", s.offices, ""], ["Spans >1 district", s.multi_district, "warn"]];
+  if (s.changes) tiles.push(["Changes logged", s.changes, ""]);
   $("stats").innerHTML = tiles.map(function(t){
     return '<div class="stat ' + t[2] + '"><span class="k">' + t[0] +
            '</span><span class="v">' + num(t[1]) + "</span></div>";
